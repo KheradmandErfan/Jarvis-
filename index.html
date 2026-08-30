@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #05070a;
+    --bg-deep: #020304;
+    --ember: #ff8a2b;
+    --ember-hot: #ffc266;
+    --ember-dim: #7a3d10;
+    --ring-track: #1c1408;
+    --text: #f3ead9;
+    --text-dim: #a68f6e;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    height:100%;
+    background: radial-gradient(ellipse at 50% 30%, #0d0704 0%, var(--bg) 45%, var(--bg-deep) 100%);
+    color: var(--text);
+    font-family:'Rajdhani',sans-serif;
+    overflow:hidden;
+  }
+
+  body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    padding:24px;
+  }
+
+  /* ---------- top status bar ---------- */
+  .status-bar{
+    position:absolute;
+    top:28px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:28px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    color: var(--text-dim);
+  }
+  .status-bar span.value{ color: var(--ember-hot); }
+
+  /* ---------- reactor core ---------- */
+  .reactor-wrap{
+    position:relative;
+    width:min(72vw, 420px);
+    height:min(72vw, 420px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  .ring{
+    position:absolute;
+    border-radius:50%;
+    border:1px solid var(--ring-track);
+  }
+  .ring--outer{
+    inset:0;
+    border-color:#221407;
+    animation: spin 40s linear infinite;
+  }
+  .ring--outer::before, .ring--outer::after{
+    content:"";
+    position:absolute;
+    width:6px; height:6px;
+    background: var(--ember-dim);
+    border-radius:50%;
+    top:-3px; left:calc(50% - 3px);
+  }
+  .ring--outer::after{ top:auto; bottom:-3px; }
+
+  .ring--dashed{
+    inset:9%;
+    border:2px dashed var(--ember-dim);
+    animation: spin-rev 26s linear infinite;
+    opacity:.55;
+  }
+
+  .ring--tick{
+    inset:18%;
+    animation: spin 60s linear infinite;
+  }
+  .ring--tick svg{ width:100%; height:100%; display:block; }
+
+  .core{
+    position:absolute;
+    inset:30%;
+    border-radius:50%;
+    background: radial-gradient(circle at 50% 45%, var(--ember-hot) 0%, var(--ember) 38%, #3a1c06 78%, transparent 100%);
+    box-shadow:
+      0 0 30px 6px rgba(255,138,43,.55),
+      0 0 90px 30px rgba(255,138,43,.22),
+      inset 0 0 20px rgba(255,255,255,.25);
+    animation: breathe 3.2s ease-in-out infinite;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .core-inner{
+    width:38%;
+    height:38%;
+    border-radius:50%;
+    background: radial-gradient(circle, #fff4df 0%, var(--ember-hot) 55%, transparent 100%);
+    filter: blur(0.3px);
+  }
+
+  .reactor-wrap.listening .core{
+    animation: breathe-fast 1s ease-in-out infinite;
+  }
+  .reactor-wrap.listening .ring--dashed{
+    animation-duration: 8s;
+    opacity:.9;
+  }
+  .reactor-wrap.speaking .core{
+    animation: breathe-fast .55s ease-in-out infinite;
+  }
+
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  @keyframes spin-rev{ to{ transform: rotate(-360deg); } }
+  @keyframes breathe{
+    0%,100%{ transform: scale(1); filter:brightness(1); }
+    50%{ transform: scale(1.035); filter:brightness(1.15); }
+  }
+  @keyframes breathe-fast{
+    0%,100%{ transform: scale(1); filter:brightness(1); }
+    50%{ transform: scale(1.09); filter:brightness(1.3); }
+  }
+
+  /* ---------- caption / readout ---------- */
+  .readout{
+    margin-top:36px;
+    min-height:64px;
+    max-width:560px;
+    text-align:center;
+  }
+  .readout .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    color: var(--ember-dim);
+    margin-bottom:6px;
+  }
+  .readout .line{
+    font-size:19px;
+    font-weight:500;
+    color: var(--text);
+    line-height:1.4;
+  }
+  .readout .line.dim{ color: var(--text-dim); font-size:15px; }
+
+  /* ---------- log ---------- */
+  .log{
+    position:absolute;
+    bottom:26px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(90vw, 560px);
+    max-height:110px;
+    overflow-y:auto;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color: var(--text-dim);
+    text-align:left;
+    scrollbar-width:none;
+  }
+  .log::-webkit-scrollbar{ display:none; }
+  .log div{ padding:2px 0; border-bottom:1px solid #14100a; }
+  .log div.user span{ color:var(--ember-hot); }
+  .log div.sys span{ color:#7d8f9c; }
+
+  .hint{
+    position:absolute;
+    top:78px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:12px;
+    color: var(--text-dim);
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:.05em;
+    text-align:center;
+    max-width:80vw;
+  }
+
+  .unsupported{
+    position:absolute;
+    inset:0;
+    background: var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px;
+    font-size:16px;
+    color: var(--text-dim);
+    z-index:50;
+  }
+
+  .error-banner{
+    position:absolute;
+    top:110px;
+    left:50%;
+    transform:translateX(-50%);
+    max-width:80vw;
+    background: rgba(120,20,10,.18);
+    border:1px solid #7a2a10;
+    color:#ffb499;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    padding:8px 14px;
+    border-radius:4px;
+    text-align:center;
+    display:none;
+  }
+
+  .gear-btn{
+    position:absolute;
+    top:26px;
+    right:26px;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:1px solid var(--ember-dim);
+    background:transparent;
+    color: var(--text-dim);
+    font-size:15px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .gear-btn:hover{ color: var(--ember-hot); border-color: var(--ember-hot); }
+
+  .thinking-dot{
+    display:inline-block;
+    width:6px; height:6px;
+    border-radius:50%;
+    background: var(--ember-hot);
+    margin-left:4px;
+    animation: blink 1s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:.2;} 50%{opacity:1;} }
+</style>
+</head>
+<body>
+
+  <button class="gear-btn" id="gearBtn" title="API Key">⚙</button>
+
+  <div class="status-bar">
+    <div>SYS <span class="value" id="sysState">STANDBY</span></div>
+    <div>MIC <span class="value" id="micState">OFF</span></div>
+    <div>CLOCK <span class="value" id="clockVal">--:--:--</span></div>
+  </div>
+
+  <div class="hint">اول از دکمه‌ی ⚙ کلید API رو وارد کن، بعد روی هسته کلیک کن و بگو «Jarvis»</div>
+  <div class="error-banner" id="errorBanner"></div>
+
+  <div class="reactor-wrap" id="reactor">
+    <div class="ring ring--outer"></div>
+    <div class="ring ring--dashed"></div>
+    <div class="ring ring--tick">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="48" fill="none" stroke="#2a1a0a" stroke-width="1" stroke-dasharray="1 4.2"/>
+      </svg>
+    </div>
+    <div class="core"><div class="core-inner"></div></div>
+  </div>
+
+  <div class="readout">
+    <div class="label">READOUT</div>
+    <div class="line" id="mainLine">آماده‌ام، آقای استارک.</div>
+    <div class="line dim" id="subLine"></div>
+  </div>
+
+  <div class="log" id="log"></div>
+
+  <script>
+    const reactor   = document.getElementById('reactor');
+    const mainLine  = document.getElementById('mainLine');
+    const subLine   = document.getElementById('subLine');
+    const logEl     = document.getElementById('log');
+    const micState  = document.getElementById('micState');
+    const sysState  = document.getElementById('sysState');
+    const clockVal  = document.getElementById('clockVal');
+
+    // ---- live clock ----
+    function tickClock(){
+      const d = new Date();
+      clockVal.textContent = d.toLocaleTimeString('en-GB');
+    }
+    setInterval(tickClock, 1000);
+    tickClock();
+
+    // ---- error banner ----
+    const errorBanner = document.getElementById('errorBanner');
+    function showError(msg){
+      errorBanner.textContent = msg;
+      errorBanner.style.display = 'block';
+    }
+    function clearError(){
+      errorBanner.style.display = 'none';
+    }
+
+    // ---- logging ----
+    function log(role, text){
+      const row = document.createElement('div');
+      row.className = role;
+      row.innerHTML = `<span>${role === 'user' ? 'YOU' : 'JARVIS'}</span> — ${text}`;
+      logEl.appendChild(row);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    // ---- speech synthesis ----
+    function speak(text){
+      mainLine.textContent = text;
+      if (!('speechSynthesis' in window)) { log('sys', text); return; }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.02;
+      utter.pitch = 0.85;
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => /en-GB|en-US/.test(v.lang) && /male|daniel|david|alex/i.test(v.name))
+                      || voices.find(v => /en-GB/.test(v.lang))
+                      || voices.find(v => /en/.test(v.lang));
+      if (preferred) utter.voice = preferred;
+
+      reactor.classList.add('speaking');
+      utter.onend = () => reactor.classList.remove('speaking');
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utter);
+      log('sys', text);
+    }
+
+    // ---- AI connection ----
+    let apiKey = '';
+    const gearBtn = document.getElementById('gearBtn');
+    gearBtn.addEventListener('click', () => {
+      const entered = prompt('کلید API آنتروپیک رو وارد کن (فقط توی همین session نگه داشته می‌شه):', apiKey);
+      if (entered !== null) {
+        apiKey = entered.trim();
+        speak(apiKey ? 'کلید ذخیره شد.' : 'کلید پاک شد.');
+      }
+    });
+
+    async function askAI(question){
+      if (!apiKey) {
+        speak('برای این سوال باید اول کلید API رو از دکمه‌ی دنده وارد کنی.');
+        return;
+      }
+      mainLine.innerHTML = 'در حال فکر کردن<span class="thinking-dot"></span>';
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 300,
+            system: 'You are JARVIS, a concise voice assistant. Answer in 1-3 short spoken sentences, plain text, no markdown, no lists.',
+            messages: [{ role: 'user', content: question }]
+          })
+        });
+        if (!res.ok) {
+          const errBody = await res.text();
+          throw new Error(`${res.status}: ${errBody.slice(0,120)}`);
+        }
+        const data = await res.json();
+        const text = (data.content || []).map(b => b.text || '').join(' ').trim();
+        speak(text || 'جوابی دریافت نشد.');
+      } catch (err) {
+        showError('خطای اتصال به هوش مصنوعی: ' + err.message);
+        mainLine.textContent = 'اتصال ناموفق بود.';
+      }
+    }
+
+    // ---- command handling ----
+    const SITES = {
+      google:    'https://www.google.com',
+      youtube:   'https://www.youtube.com',
+      gmail:     'https://mail.google.com',
+      github:    'https://github.com',
+      wikipedia: 'https://www.wikipedia.org',
+      maps:      'https://maps.google.com',
+      'google maps': 'https://maps.google.com'
+    };
+
+    function handleCommand(raw){
+      let cmd = raw.toLowerCase().trim();
+      cmd = cmd.replace(/^(hey |ok |okay )?jarvis[,.\s]*/i, '').trim();
+      if (!cmd) { speak('بله؟'); return; }
+
+      log('user', raw);
+      subLine.textContent = `«${cmd}»`;
+
+      // open <site>
+      let m = cmd.match(/^open\s+(.+)$/i) || cmd.match(/^launch\s+(.+)$/i);
+      if (m) {
+        const target = m[1].trim().replace(/\.$/, '');
+        const url = SITES[target] || `https://www.google.com/search?q=${encodeURIComponent(target)}`;
+        window.open(url, '_blank');
+        speak(SITES[target] ? `Opening ${target}.` : `I couldn't find "${target}" directly, so I searched for it.`);
+        return;
+      }
+
+      // search for X
+      m = cmd.match(/^search (for )?(.+)$/i);
+      if (m) {
+        const q = m[2].trim();
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
+        speak(`Searching for ${q}.`);
+        return;
+      }
+
+      // date
+      if (/date/.test(cmd)) {
+        const d = new Date();
+        const formatted = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+        speak(`Today is ${formatted}.`);
+        return;
+      }
+
+      // time
+      if (/time/.test(cmd)) {
+        const d = new Date();
+        speak(`It's ${d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'})}.`);
+        return;
+      }
+
+      // anything else -> ask the AI
+      askAI(cmd);
+    }
+
+    // ---- speech recognition ----
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognizing = false;
+    let recognition = null;
+
+    if (!SR) {
+      const overlay = document.createElement('div');
+      overlay.className = 'unsupported';
+      overlay.innerHTML = 'مرورگرت از تشخیص گفتار پشتیبانی نمی‌کنه.<br>لطفاً این فایل رو با Google Chrome یا Microsoft Edge باز کن.';
+      document.body.appendChild(overlay);
+    } else if (!window.isSecureContext && location.protocol === 'file:') {
+      showError('این مرورگر برای فایل‌های محلی (file://) اجازه‌ی میکروفون نمی‌ده. فایل رو با یه سرور محلی یا از روی https باز کن.');
+    } else {
+      recognition = new SR();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        recognizing = true;
+        clearError();
+        reactor.classList.add('listening');
+        micState.textContent = 'LIVE';
+        sysState.textContent = 'ACTIVE';
+      };
+
+      recognition.onend = () => {
+        recognizing = false;
+        reactor.classList.remove('listening');
+        micState.textContent = 'OFF';
+        sysState.textContent = 'STANDBY';
+      };
+
+      recognition.onerror = (e) => {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+          showError('دسترسی به میکروفون رد شده. روی آیکن قفل کنار آدرس‌بار بزن و اجازه‌ی میکروفون رو فعال کن.');
+        } else if (e.error === 'no-speech') {
+          // ignore, just silence
+        } else {
+          showError('خطای تشخیص گفتار: ' + e.error);
+        }
+      };
+
+      recognition.onresult = (event) => {
+        let finalTranscript = '';
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const t = event.results[i][0].transcript;
+          if (event.results[i].isFinal) finalTranscript += t;
+          else interim += t;
+        }
+        if (interim) subLine.textContent = interim;
+        if (finalTranscript) handleCommand(finalTranscript);
+      };
+
+      reactor.addEventListener('click', () => {
+        clearError();
+        if (recognizing) {
+          recognition.stop();
+        } else {
+          speechSynthesis.cancel();
+          try {
+            recognition.start();
+          } catch (e) {
+            showError('شروع نشد: ' + e.message);
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #05070a;
+    --bg-deep: #020304;
+    --ember: #ff8a2b;
+    --ember-hot: #ffc266;
+    --ember-dim: #7a3d10;
+    --ring-track: #1c1408;
+    --text: #f3ead9;
+    --text-dim: #a68f6e;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    height:100%;
+    background: radial-gradient(ellipse at 50% 30%, #0d0704 0%, var(--bg) 45%, var(--bg-deep) 100%);
+    color: var(--text);
+    font-family:'Rajdhani',sans-serif;
+    overflow:hidden;
+  }
+
+  body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    padding:24px;
+  }
+
+  /* ---------- top status bar ---------- */
+  .status-bar{
+    position:absolute;
+    top:28px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:28px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    color: var(--text-dim);
+  }
+  .status-bar span.value{ color: var(--ember-hot); }
+
+  /* ---------- reactor core ---------- */
+  .reactor-wrap{
+    position:relative;
+    width:min(72vw, 420px);
+    height:min(72vw, 420px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  .ring{
+    position:absolute;
+    border-radius:50%;
+    border:1px solid var(--ring-track);
+  }
+  .ring--outer{
+    inset:0;
+    border-color:#221407;
+    animation: spin 40s linear infinite;
+  }
+  .ring--outer::before, .ring--outer::after{
+    content:"";
+    position:absolute;
+    width:6px; height:6px;
+    background: var(--ember-dim);
+    border-radius:50%;
+    top:-3px; left:calc(50% - 3px);
+  }
+  .ring--outer::after{ top:auto; bottom:-3px; }
+
+  .ring--dashed{
+    inset:9%;
+    border:2px dashed var(--ember-dim);
+    animation: spin-rev 26s linear infinite;
+    opacity:.55;
+  }
+
+  .ring--tick{
+    inset:18%;
+    animation: spin 60s linear infinite;
+  }
+  .ring--tick svg{ width:100%; height:100%; display:block; }
+
+  .core{
+    position:absolute;
+    inset:30%;
+    border-radius:50%;
+    background: radial-gradient(circle at 50% 45%, var(--ember-hot) 0%, var(--ember) 38%, #3a1c06 78%, transparent 100%);
+    box-shadow:
+      0 0 30px 6px rgba(255,138,43,.55),
+      0 0 90px 30px rgba(255,138,43,.22),
+      inset 0 0 20px rgba(255,255,255,.25);
+    animation: breathe 3.2s ease-in-out infinite;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .core-inner{
+    width:38%;
+    height:38%;
+    border-radius:50%;
+    background: radial-gradient(circle, #fff4df 0%, var(--ember-hot) 55%, transparent 100%);
+    filter: blur(0.3px);
+  }
+
+  .reactor-wrap.listening .core{
+    animation: breathe-fast 1s ease-in-out infinite;
+  }
+  .reactor-wrap.listening .ring--dashed{
+    animation-duration: 8s;
+    opacity:.9;
+  }
+  .reactor-wrap.speaking .core{
+    animation: breathe-fast .55s ease-in-out infinite;
+  }
+
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  @keyframes spin-rev{ to{ transform: rotate(-360deg); } }
+  @keyframes breathe{
+    0%,100%{ transform: scale(1); filter:brightness(1); }
+    50%{ transform: scale(1.035); filter:brightness(1.15); }
+  }
+  @keyframes breathe-fast{
+    0%,100%{ transform: scale(1); filter:brightness(1); }
+    50%{ transform: scale(1.09); filter:brightness(1.3); }
+  }
+
+  /* ---------- caption / readout ---------- */
+  .readout{
+    margin-top:36px;
+    min-height:64px;
+    max-width:560px;
+    text-align:center;
+  }
+  .readout .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    color: var(--ember-dim);
+    margin-bottom:6px;
+  }
+  .readout .line{
+    font-size:19px;
+    font-weight:500;
+    color: var(--text);
+    line-height:1.4;
+  }
+  .readout .line.dim{ color: var(--text-dim); font-size:15px; }
+
+  /* ---------- log ---------- */
+  .log{
+    position:absolute;
+    bottom:26px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(90vw, 560px);
+    max-height:110px;
+    overflow-y:auto;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color: var(--text-dim);
+    text-align:left;
+    scrollbar-width:none;
+  }
+  .log::-webkit-scrollbar{ display:none; }
+  .log div{ padding:2px 0; border-bottom:1px solid #14100a; }
+  .log div.user span{ color:var(--ember-hot); }
+  .log div.sys span{ color:#7d8f9c; }
+
+  .hint{
+    position:absolute;
+    top:78px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:12px;
+    color: var(--text-dim);
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:.05em;
+    text-align:center;
+    max-width:80vw;
+  }
+
+  .unsupported{
+    position:absolute;
+    inset:0;
+    background: var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px;
+    font-size:16px;
+    color: var(--text-dim);
+    z-index:50;
+  }
+
+  .error-banner{
+    position:absolute;
+    top:110px;
+    left:50%;
+    transform:translateX(-50%);
+    max-width:80vw;
+    background: rgba(120,20,10,.18);
+    border:1px solid #7a2a10;
+    color:#ffb499;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    padding:8px 14px;
+    border-radius:4px;
+    text-align:center;
+    display:none;
+  }
+
+  .top-right-controls{
+    position:absolute;
+    top:20px;
+    right:18px;
+    display:flex;
+    gap:6px;
+  }
+
+  .top-left-controls{
+    position:absolute;
+    top:20px;
+    left:18px;
+    display:flex;
+    gap:6px;
+  }
+
+  .gear-btn{
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    border:1px solid var(--ember-dim);
+    background:transparent;
+    color: var(--text-dim);
+    font-size:12px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .gear-btn:hover{ color: var(--ember-hot); border-color: var(--ember-hot); }
+  .gear-btn.active{
+    color: var(--bg);
+    background: var(--ember-hot);
+    border-color: var(--ember-hot);
+  }
+
+  .thinking-dot{
+    display:inline-block;
+    width:6px; height:6px;
+    border-radius:50%;
+    background: var(--ember-hot);
+    margin-left:4px;
+    animation: blink 1s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:.2;} 50%{opacity:1;} }
+
+  .text-input-row{
+    margin-top:22px;
+    display:flex;
+    gap:8px;
+    width:min(90vw, 420px);
+  }
+  .text-input-row input{
+    flex:1;
+    background: rgba(255,255,255,.03);
+    border:1px solid var(--ring-track);
+    border-radius:6px;
+    padding:10px 12px;
+    color: var(--text);
+    font-family:'Rajdhani',sans-serif;
+    font-size:15px;
+    outline:none;
+  }
+  .text-input-row input:focus{ border-color: var(--ember-dim); }
+  .text-input-row input::placeholder{ color:#5c503d; }
+  .text-input-row button{
+    width:42px;
+    border-radius:6px;
+    border:1px solid var(--ember-dim);
+    background:transparent;
+    color: var(--ember-hot);
+    font-size:16px;
+    cursor:pointer;
+  }
+  .text-input-row button:hover{ background: var(--ember-dim); }
+
+  .confirm-box{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    margin-top:22px;
+    padding:16px 20px;
+    max-width:min(90vw, 460px);
+    border:1px solid var(--ember-dim);
+    border-radius:8px;
+    background: rgba(255,138,43,.06);
+  }
+  .confirm-box .confirm-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    color: var(--ember-dim);
+  }
+  .confirm-box .confirm-text{
+    text-align:center;
+    font-size:17px;
+    color: var(--text);
+  }
+  .confirm-actions{ display:flex; gap:14px; }
+  .confirm-btn{
+    padding:8px 22px;
+    border-radius:6px;
+    font-family:'Rajdhani',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    border:1px solid;
+  }
+  .confirm-btn.yes{
+    background: var(--ember);
+    border-color: var(--ember);
+    color: #1a0e04;
+  }
+  .confirm-btn.no{
+    background:transparent;
+    border-color: var(--text-dim);
+    color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+  <div class="top-left-controls">
+    <button class="gear-btn" id="pinBtn" title="Secure Panel">⚙</button>
+  </div>
+
+  <div class="top-right-controls">
+    <button class="gear-btn active" id="confirmToggleBtn" title="تأیید قبل از اجرا">✓</button>
+    <button class="gear-btn" id="gearBtn" title="API Key">⚙</button>
+  </div>
+
+  <div class="status-bar">
+    <div>SYS <span class="value" id="sysState">STANDBY</span></div>
+    <div>MIC <span class="value" id="micState">OFF</span></div>
+    <div>CLOCK <span class="value" id="clockVal">--:--:--</span></div>
+  </div>
+
+  <div class="error-banner" id="errorBanner"></div>
+
+  <div class="reactor-wrap" id="reactor">
+    <div class="ring ring--outer"></div>
+    <div class="ring ring--dashed"></div>
+    <div class="ring ring--tick">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="48" fill="none" stroke="#2a1a0a" stroke-width="1" stroke-dasharray="1 4.2"/>
+      </svg>
+    </div>
+    <div class="core"><div class="core-inner"></div></div>
+  </div>
+
+  <div class="readout">
+    <div class="label">READOUT</div>
+    <div class="line" id="mainLine">آماده‌ام، آقای استارک.</div>
+    <div class="line dim" id="subLine"></div>
+  </div>
+
+  <div class="confirm-box" id="confirmBox">
+    <div class="confirm-label">CONFIRM COMMAND</div>
+    <div class="confirm-text" id="confirmText"></div>
+    <div class="confirm-actions">
+      <button class="confirm-btn yes" id="confirmYes">✓ Yes</button>
+      <button class="confirm-btn no" id="confirmNo">✗ No</button>
+    </div>
+  </div>
+
+  <div class="text-input-row">
+    <input type="text" id="textCmdInput" placeholder="یا اینجا تایپ کن...">
+    <button id="textCmdSend">➤</button>
+  </div>
+
+  <div class="log" id="log"></div>
+
+  <script>
+    const reactor   = document.getElementById('reactor');
+    const mainLine  = document.getElementById('mainLine');
+    const subLine   = document.getElementById('subLine');
+    const logEl     = document.getElementById('log');
+    const micState  = document.getElementById('micState');
+    const sysState  = document.getElementById('sysState');
+    const clockVal  = document.getElementById('clockVal');
+
+    // ---- live clock ----
+    function tickClock(){
+      const d = new Date();
+      clockVal.textContent = d.toLocaleTimeString('en-GB');
+    }
+    setInterval(tickClock, 1000);
+    tickClock();
+
+    function randomPick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+    const HOW_ARE_YOU_REPLIES = [
+      "I'm doing well, thank you for asking.",
+      "All systems are running smoothly, sir.",
+      "Can't complain, my arc reactor's at full charge.",
+      "Better now that you're here.",
+      "Never better — systems nominal across the board.",
+      "I'm operating at peak efficiency, thanks for asking.",
+      "Just fine, though I could use a bit more processing power.",
+      "Running like a well-oiled reactor, sir.",
+      "I'm great — no errors in the log today.",
+      "Doing well. How about you?"
+    ];
+    const HOW_ARE_YOU_DOING_REPLIES = [
+      "Standing by and ready for your command, sir.",
+      "Always at your service.",
+      "Fully operational and awaiting instructions.",
+      "Everything's running perfectly on my end.",
+      "Diagnostics all green, ready when you are.",
+      "Just keeping the lights on and the systems humming.",
+      "Doing great — say the word and I'm on it.",
+      "All circuits nominal, sir.",
+      "Steady as ever, awaiting your next move.",
+      "Doing well, thanks for checking in."
+    ];
+    const WHATS_UP_REPLIES = [
+      "Not much, just keeping systems online. I'm good, thanks!",
+      "All good here, thanks for asking!",
+      "Just monitoring things as usual — I'm good, thanks.",
+      "Nothing much, all systems steady. I'm doing well, thanks!",
+      "I'm good, thanks! Just here running diagnostics.",
+      "Not a lot — everything's calm and I'm doing fine, thanks.",
+      "I'm good, thank you! Just waiting for your next command.",
+      "All quiet on my end. I'm doing well, thanks for asking!",
+      "Just cruising along — I'm good, thanks!",
+      "Nothing new, I'm doing great, thanks for checking in!"
+    ];
+    const RAINBOW_COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+
+    // ---- error banner ----
+    const errorBanner = document.getElementById('errorBanner');
+    function showError(msg){
+      errorBanner.textContent = msg;
+      errorBanner.style.display = 'block';
+    }
+    function clearError(){
+      errorBanner.style.display = 'none';
+    }
+
+    // ---- logging ----
+    function log(role, text){
+      const row = document.createElement('div');
+      row.className = role;
+      row.innerHTML = `<span>${role === 'user' ? 'YOU' : 'JARVIS'}</span> — ${text}`;
+      logEl.appendChild(row);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    // ---- speech synthesis ----
+    function speak(text){
+      mainLine.textContent = text;
+      if (!('speechSynthesis' in window)) { log('sys', text); return; }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.02;
+      utter.pitch = 0.85;
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => /en-GB|en-US/.test(v.lang) && /male|daniel|david|alex/i.test(v.name))
+                      || voices.find(v => /en-GB/.test(v.lang))
+                      || voices.find(v => /en/.test(v.lang));
+      if (preferred) utter.voice = preferred;
+
+      reactor.classList.add('speaking');
+      utter.onend = () => reactor.classList.remove('speaking');
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utter);
+      log('sys', text);
+    }
+
+    // ---- confirm-before-execute toggle ----
+    let confirmMode = true;
+    const confirmToggleBtn = document.getElementById('confirmToggleBtn');
+    confirmToggleBtn.addEventListener('click', () => {
+      confirmMode = !confirmMode;
+      confirmToggleBtn.classList.toggle('active', confirmMode);
+      confirmToggleBtn.title = confirmMode ? 'تأیید قبل از اجرا: روشن' : 'تأیید قبل از اجرا: خاموش';
+    });
+
+    const confirmBox  = document.getElementById('confirmBox');
+    const confirmText = document.getElementById('confirmText');
+    const confirmYes  = document.getElementById('confirmYes');
+    const confirmNo   = document.getElementById('confirmNo');
+    let pendingConfirmText = null;
+    let voiceAccum = '';
+
+    function askConfirmation(text){
+      pendingConfirmText = text;
+      confirmText.textContent = `«${text}»`;
+      confirmBox.style.display = 'flex';
+    }
+
+    // Stops the listening chain and either runs the accumulated command or discards it.
+    function finalizeCapture(execute){
+      listeningSession = false;
+      try { recognition && recognition.stop(); } catch (e) {}
+      confirmBox.style.display = 'none';
+      const text = voiceAccum;
+      voiceAccum = '';
+      pendingConfirmText = null;
+      if (execute && text) handleCommand(text);
+    }
+
+    confirmYes.addEventListener('click', () => finalizeCapture(true));
+    confirmNo.addEventListener('click', () => {
+      finalizeCapture(false);
+      mainLine.textContent = 'لغو شد.';
+    });
+
+    // Removes duplicated command keywords (search/for/open/jarvis) and duplicated
+    // content words caused by the device re-hearing the same audio across chained
+    // restarts, then rebuilds a clean "search for X" / "open X" style command.
+    function cleanVoiceCommand(raw){
+      const words = raw.trim().split(/\s+/);
+      let action = null;
+      const contentWords = [];
+      const seen = new Set();
+
+      for (const w of words) {
+        const lw = w.toLowerCase().replace(/[^a-z']/g, '');
+        if (!lw) continue;
+        if (['jarvis', 'hey', 'ok', 'okay'].includes(lw)) continue;
+        if (lw === 'search' || lw === 'open' || lw === 'launch') {
+          if (!action) action = (lw === 'launch') ? 'open' : lw;
+          continue;
+        }
+        if (lw === 'for' && action === 'search') continue;
+        if (seen.has(lw)) continue;
+        seen.add(lw);
+        contentWords.push(w);
+      }
+
+      if (action && contentWords.length) {
+        const query = contentWords.join(' ');
+        return action === 'search' ? `search for ${query}` : `open ${query}`;
+      }
+      return contentWords.join(' ');
+    }
+
+    function stripWake(text){
+      return text.toLowerCase().trim().replace(/^(hey |ok |okay )?jarvis[,.\s]*/i, '').trim();
+    }
+
+    // ---- typed command input ----
+    const textCmdInput = document.getElementById('textCmdInput');
+    const textCmdSend  = document.getElementById('textCmdSend');
+    function sendTypedCommand(){
+      const val = textCmdInput.value.trim();
+      if (!val) return;
+      textCmdInput.value = '';
+      handleCommand(val);
+    }
+    textCmdSend.addEventListener('click', sendTypedCommand);
+    textCmdInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendTypedCommand();
+    });
+
+    // ---- secure panel (top-left button) ----
+    const pinBtn = document.getElementById('pinBtn');
+    pinBtn.addEventListener('click', () => {
+      const entered = prompt('پین ۴ رقمی رو وارد کن:');
+      if (entered !== null) {
+        if (entered.trim() === '3392') {
+          alert('پوچ! فکر کردی خیلی زرنگی نه؟');
+        } else {
+          alert('پین اشتباه وارد شد.');
+        }
+      }
+    });
+
+    // ---- AI connection ----
+    let apiKey = '';
+    const gearBtn = document.getElementById('gearBtn');
+    gearBtn.addEventListener('click', () => {
+      const entered = prompt('کلید API جمینای (Google AI Studio) رو وارد کن (فقط توی همین session نگه داشته می‌شه):', apiKey);
+      if (entered !== null) {
+        apiKey = entered.trim();
+        speak(apiKey ? 'کلید ذخیره شد.' : 'کلید پاک شد.');
+      }
+    });
+
+    async function askAI(question){
+      if (!apiKey) {
+        speak('برای این سوال باید اول کلید API رو از دکمه‌ی دنده وارد کنی.');
+        return;
+      }
+      mainLine.innerHTML = 'در حال فکر کردن<span class="thinking-dot"></span>';
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: 'You are JARVIS, a concise voice assistant. Answer in 1-3 short spoken sentences, plain text, no markdown, no lists.' }]
+            },
+            contents: [{ role: 'user', parts: [{ text: question }] }]
+          })
+        });
+        if (!res.ok) {
+          const errBody = await res.text();
+          throw new Error(`${res.status}: ${errBody.slice(0,150)}`);
+        }
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join(' ').trim();
+        speak(text || 'جوابی دریافت نشد.');
+      } catch (err) {
+        showError('خطای اتصال به هوش مصنوعی: ' + err.message);
+        mainLine.textContent = 'اتصال ناموفق بود.';
+      }
+    }
+
+    // ---- fallback web answer (used when no API key is set) ----
+    // Tries Wikipedia's free, key-less REST API first (CORS-enabled); if it
+    // can't find a direct answer, falls back to opening a Google search tab.
+    async function answerFromWeb(question){
+      mainLine.innerHTML = 'در حال جستجو<span class="thinking-dot"></span>';
+      try {
+        const searchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(question)}&limit=1&namespace=0&format=json&origin=*`;
+        const searchRes = await fetch(searchUrl);
+        const searchData = await searchRes.json();
+        const title = searchData?.[1]?.[0];
+
+        if (title) {
+          const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+          const summaryRes = await fetch(summaryUrl);
+          if (summaryRes.ok) {
+            const summaryData = await summaryRes.json();
+            const extract = (summaryData.extract || '').trim();
+            if (extract) {
+              const sentences = extract.match(/[^.!?]+[.!?]+/g) || [extract];
+              const short = sentences.slice(0, 3).join(' ').trim();
+              speak(`${short} That's from Wikipedia.`);
+              return;
+            }
+          }
+        }
+
+        // no direct answer found — fall back to a Google search tab
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(question)}`, '_blank');
+        speak(`I couldn't find a direct answer, so I opened a Google search for "${question}". Add an API key from the gear icon for smarter answers.`);
+      } catch (err) {
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(question)}`, '_blank');
+        speak('I ran into an issue searching, so I opened Google instead.');
+      }
+    }
+
+    // ---- command handling ----
+    // Best-effort "installed app" launcher: the browser can't truly enumerate
+    // installed apps, so we try a known mobile deep-link scheme for the
+    // requested name, detect whether the OS actually switched away (blur) to
+    // handle it, and otherwise fall back to that app's website, and finally
+    // to a plain Google search of the name if we don't recognize it at all.
+    const APP_REGISTRY = {
+      instagram:      { scheme: 'instagram://app',   web: 'https://www.instagram.com' },
+      telegram:       { scheme: 'tg://resolve',       web: 'https://web.telegram.org' },
+      whatsapp:       { scheme: 'whatsapp://send',    web: 'https://web.whatsapp.com' },
+      youtube:        { scheme: 'youtube://',         web: 'https://www.youtube.com' },
+      twitter:        { scheme: 'twitter://',         web: 'https://twitter.com' },
+      x:              { scheme: 'twitter://',         web: 'https://twitter.com' },
+      gmail:          { scheme: 'googlegmail://',     web: 'https://mail.google.com' },
+      maps:           { scheme: 'comgooglemaps://',   web: 'https://maps.google.com' },
+      'google maps':  { scheme: 'comgooglemaps://',   web: 'https://maps.google.com' },
+      spotify:        { scheme: 'spotify://',         web: 'https://open.spotify.com' },
+      netflix:        { scheme: 'nflx://',            web: 'https://www.netflix.com' },
+      facebook:       { scheme: 'fb://',              web: 'https://www.facebook.com' },
+      tiktok:         { scheme: 'tiktok://',          web: 'https://www.tiktok.com' },
+      snapchat:       { scheme: 'snapchat://',        web: 'https://www.snapchat.com' },
+      discord:        { scheme: 'discord://',         web: 'https://discord.com/app' },
+      reddit:         { scheme: 'reddit://',          web: 'https://www.reddit.com' },
+      linkedin:       { scheme: 'linkedin://',        web: 'https://www.linkedin.com' },
+      amazon:         { scheme: null,                 web: 'https://www.amazon.com' },
+      github:         { scheme: null,                 web: 'https://github.com' },
+      google:         { scheme: null,                 web: 'https://www.google.com' },
+      wikipedia:      { scheme: null,                 web: 'https://www.wikipedia.org' }
+    };
+
+    function findAppMatch(target){
+      const norm = target.toLowerCase().replace(/\bapp\b/g, '').trim();
+      if (!norm) return null;
+      if (APP_REGISTRY[norm]) return { key: norm, ...APP_REGISTRY[norm] };
+      for (const key in APP_REGISTRY) {
+        if (norm.includes(key) || key.includes(norm)) return { key, ...APP_REGISTRY[key] };
+      }
+      return null;
+    }
+
+    function attemptOpenApp(match, displayName){
+      speak(`Opening ${displayName}.`);
+      let didBlur = false;
+      const blurHandler = () => { didBlur = true; };
+      window.addEventListener('blur', blurHandler, { once: true });
+      try { window.location.href = match.scheme; } catch (e) {}
+      setTimeout(() => {
+        window.removeEventListener('blur', blurHandler);
+        if (!didBlur) {
+          // app didn't seem to open (likely not installed) — fall back to its website
+          window.open(match.web, '_blank');
+          speak(`Looks like the ${displayName} app isn't installed, so I opened its website instead.`);
+        }
+      }, 1200);
+    }
+
+    function handleCommand(raw){
+      let cmd = raw.toLowerCase().trim();
+      cmd = cmd.replace(/^(hey |ok |okay )?jarvis[,.\s]*/i, '').trim();
+      if (!cmd) { speak('Yes, sir?'); return; }
+
+      log('user', raw);
+      subLine.textContent = `«${cmd}»`;
+
+      // personality / small talk — checked before the generic AI fallback
+      if (/how('?s| is| are) you doing/.test(cmd)) { speak(randomPick(HOW_ARE_YOU_DOING_REPLIES)); return; }
+      if (/how('?s| is| are) you/.test(cmd)) { speak(randomPick(HOW_ARE_YOU_REPLIES)); return; }
+      if (/what'?s up/.test(cmd)) { speak(randomPick(WHATS_UP_REPLIES)); return; }
+      if (/favorite colou?r/.test(cmd)) { speak(`My favorite color is ${randomPick(RAINBOW_COLORS)}.`); return; }
+      if (/who('s| is) your owner/.test(cmd)) { speak('Mohammad Erfan Kheradmand made me!'); return; }
+      if (/capital of iran/.test(cmd)) { speak('Tehran.'); return; }
+
+      // open "<app name>" app — look for a matching known app, else its
+      // website, else just Google-search the name so the user can find it themselves
+      let m = cmd.match(/^open\s+(.+)$/i) || cmd.match(/^launch\s+(.+)$/i);
+      if (m) {
+        const target = m[1].trim().replace(/^["'“”]+|["'“”.]+$/g, '');
+        const match = findAppMatch(target);
+        if (match && match.scheme) {
+          attemptOpenApp(match, target);
+        } else if (match && match.web) {
+          window.open(match.web, '_blank');
+          speak(`Opening the ${target} website.`);
+        } else {
+          window.open(`https://www.google.com/search?q=${encodeURIComponent(target)}`, '_blank');
+          speak(`I couldn't find "${target}" as an app, so I searched Google for it.`);
+        }
+        return;
+      }
+
+      // search for X
+      m = cmd.match(/^search (for )?(.+)$/i);
+      if (m) {
+        const q = m[2].trim().replace(/^["'“”]+|["'“”.]+$/g, '');
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
+        speak(`Searching for ${q}.`);
+        return;
+      }
+
+      // date
+      if (/date/.test(cmd)) {
+        const d = new Date();
+        const formatted = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+        speak(`Today is ${formatted}.`);
+        return;
+      }
+
+      // time
+      if (/time/.test(cmd)) {
+        const d = new Date();
+        speak(`It's ${d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'})}.`);
+        return;
+      }
+
+      // anything else -> ask the AI, or if no API key is set, fall back to a web/Wikipedia lookup
+      if (apiKey) {
+        askAI(cmd);
+      } else {
+        answerFromWeb(cmd);
+      }
+    }
+
+    // ---- speech recognition ----
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognizing = false;
+    let listeningSession = false; // true while we intend to keep capturing, across chained restarts
+    let recognition = null;
+
+    if (!SR) {
+      const overlay = document.createElement('div');
+      overlay.className = 'unsupported';
+      overlay.innerHTML = 'مرورگرت از تشخیص گفتار پشتیبانی نمی‌کنه.<br>لطفاً این فایل رو با Google Chrome یا Microsoft Edge باز کن.';
+      document.body.appendChild(overlay);
+    } else if (!window.isSecureContext && location.protocol === 'file:') {
+      showError('این مرورگر برای فایل‌های محلی (file://) اجازه‌ی میکروفون نمی‌ده. فایل رو با یه سرور محلی یا از روی https باز کن.');
+    } else {
+      recognition = new SR();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        recognizing = true;
+        clearError();
+        reactor.classList.add('listening');
+        micState.textContent = 'LIVE';
+        sysState.textContent = 'ACTIVE';
+      };
+
+      recognition.onend = () => {
+        recognizing = false;
+        reactor.classList.remove('listening');
+        micState.textContent = 'OFF';
+        sysState.textContent = 'STANDBY';
+        if (listeningSession) {
+          // this device stops the engine after one chunk regardless of "continuous" —
+          // restart immediately so we keep capturing the rest of the sentence
+          setTimeout(() => { try { recognition.start(); } catch (e) {} }, 150);
+        }
+      };
+
+      recognition.onerror = (e) => {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+          listeningSession = false;
+          showError('دسترسی به میکروفون رد شده. روی آیکن قفل کنار آدرس‌بار بزن و اجازه‌ی میکروفون رو فعال کن.');
+        } else if (e.error === 'no-speech' || e.error === 'aborted') {
+          if (listeningSession && voiceAccum && !confirmMode) {
+            // a pause after already capturing something, with confirmation off — treat as end of sentence
+            finalizeCapture(true);
+          }
+          // otherwise ignore — onend will restart if we're still in a listening session
+        } else {
+          showError('خطای تشخیص گفتار: ' + e.error);
+        }
+      };
+
+      recognition.onresult = (event) => {
+        let interim = '';
+        let lastFinal = null;
+
+        for (let i = 0; i < event.results.length; i++) {
+          const r = event.results[i];
+          if (r.isFinal) {
+            lastFinal = r[0].transcript;
+          } else {
+            interim = r[0].transcript;
+          }
+        }
+
+        if (interim) {
+          subLine.textContent = cleanVoiceCommand(
+            `${voiceAccum} ${interim}`.trim()
+          );
+        }
+
+        if (lastFinal) {
+          // Accumulate final chunks in BOTH modes so the command is not
+          // replaced by only the newest recognized word/chunk.
+          const combined = `${voiceAccum} ${lastFinal}`.trim();
+          const cleaned = cleanVoiceCommand(combined);
+
+          if (!cleaned) {
+            // Only acknowledge an actual wake word. Pressing the reactor/button
+            // must NOT trigger "Yes, sir?" by itself.
+            const heardWakeWord = /\b(?:hey\s+|ok\s+|okay\s+)?jarvis\b/i.test(lastFinal.trim());
+            if (heardWakeWord && !voiceAccum) {
+              speak('Yes, sir?');
+              subLine.textContent = '';
+            }
+            return;
+          }
+
+          voiceAccum = cleaned;
+          subLine.textContent = voiceAccum;
+
+          if (confirmMode) {
+            askConfirmation(voiceAccum);
+          }
+          // Confirmation OFF uses the exact same accumulation; execution
+          // happens in finalizeCapture(true) after the capture ends.
+        }
+      };
+
+      reactor.addEventListener('click', () => {
+        clearError();
+        if (listeningSession) {
+          if (confirmMode) {
+            listeningSession = false;
+            recognition.stop(); // leaves any open confirm panel in place, awaiting Yes/No
+          } else {
+            finalizeCapture(true); // no panel in this mode — manual stop means "run it now"
+          }
+        } else {
+          listeningSession = true;
+          voiceAccum = '';
+          confirmBox.style.display = 'none';
+          pendingConfirmText = null;
+          speechSynthesis.cancel();
+          try {
+            recognition.start();
+          } catch (e) {
+            listeningSession = false;
+            showError('شروع نشد: ' + e.message);
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

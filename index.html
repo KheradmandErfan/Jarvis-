@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05070a">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<title>Jarvis Assistant | Free AI Voice Assistant Web App</title>
+<meta name="description" content="Jarvis Assistant is a free AI voice assistant that runs in your browser. Use voice commands or text to ask AI questions, translate languages, calculate math, check world time, search the web, open apps, play games, and more.">
+<meta name="keywords" content="Jarvis Assistant, Jarvis AI, JARVIS assistant, AI voice assistant, free AI assistant, free voice assistant, online AI assistant, browser AI assistant, web voice assistant, AI chatbot, voice chatbot, speech recognition, speech assistant, virtual assistant, Iron Man Jarvis, JARVIS inspired, AI tools, online assistant, voice commands, AI search, AI translator, AI calculator, world clock, song identification, browser assistant">
+<meta name="author" content="Mohammad Erfan Kheradmand">
+<meta name="application-name" content="Jarvis Assistant">
+<meta name="apple-mobile-web-app-title" content="Jarvis Assistant">
+<link rel="canonical" href="https://kheradmanderfan.github.io/Jarvis-/">
+<link rel="image_src" href="https://kheradmanderfan.github.io/Jarvis-/preview.png">
+
+<!-- Open Graph / Facebook / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kheradmanderfan.github.io/Jarvis-/">
+<meta property="og:title" content="Jarvis Assistant | Free AI Voice Assistant">
+<meta property="og:description" content="A free browser-based AI voice assistant with voice commands, AI answers, translation, math, web search, world time, app launching, games, and more.">
+<meta property="og:image" content="https://kheradmanderfan.github.io/Jarvis-/preview.png">
+<meta property="og:image:alt" content="Jarvis Assistant futuristic AI voice assistant interface">
+<meta property="og:site_name" content="Jarvis Assistant">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Jarvis Assistant | Free AI Voice Assistant">
+<meta name="twitter:description" content="Free browser-based AI voice assistant with voice commands, AI answers, translation, math, web search, world time, app launching, games, and more.">
+<meta name="twitter:image" content="https://kheradmanderfan.github.io/Jarvis-/preview.png">
+<meta name="twitter:image:alt" content="Jarvis Assistant futuristic AI voice assistant interface">
+
+<!-- Structured data for Google -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Jarvis Assistant",
+  "url": "https://kheradmanderfan.github.io/Jarvis-/",
+  "applicationCategory": "UtilitiesApplication",
+  "applicationSubCategory": "AI Voice Assistant",
+  "operatingSystem": "Any (Web Browser)",
+  "browserRequirements": "Requires a modern web browser; microphone features require browser permission.",
+  "description": "Jarvis Assistant is a free, browser-based AI voice assistant inspired by Iron Man's JARVIS, featuring voice recognition, AI-powered answers, translation, math, timezone lookups, web search, app launching, mini-games, and song identification.",
+  "featureList": [
+    "Voice recognition",
+    "AI-powered question answering",
+    "Text commands",
+    "Language translation",
+    "Math calculator",
+    "World clock and date",
+    "Web search",
+    "App and website launching",
+    "Rock paper scissors game",
+    "Song identification"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Mohammad Erfan Kheradmand"
+  }
+}
+</script>
+
+<!-- Additional structured data for the website/entity -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Jarvis Assistant",
+  "alternateName": ["JARVIS Assistant", "Jarvis AI", "JARVIS AI"],
+  "url": "https://kheradmanderfan.github.io/Jarvis-/",
+  "description": "Free browser-based AI voice assistant with voice commands, AI answers, translation, math, web search, world time, and more."
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #05070a;
+    --bg-deep: #020304;
+    --ember: #ff8a2b;
+    --ember-hot: #ffc266;
+    --ember-dim: #7a3d10;
+    --ring-track: #1c1408;
+    --text: #f3ead9;
+    --text-dim: #a68f6e;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    height:100%;
+    background: radial-gradient(ellipse at 50% 30%, #0d0704 0%, var(--bg) 45%, var(--bg-deep) 100%);
+    color: var(--text);
+    font-family:'Rajdhani',sans-serif;
+    overflow:hidden;
+  }
+
+  body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    padding:24px;
+  }
+
+  /* ---------- top status bar ---------- */
+  .status-bar{
+    position:absolute;
+    top:28px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:28px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    color: var(--text-dim);
+  }
+  .status-bar span.value{ color: var(--ember-hot); }
+
+  /* ---------- reactor core ---------- */
+  .reactor-wrap{
+    position:relative;
+    width:min(72vw, 420px);
+    height:min(72vw, 420px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  .ring{
+    position:absolute;
+    border-radius:50%;
+    border:1px solid var(--ring-track);
+  }
+  .ring--outer{
+    inset:0;
+    border-color:#221407;
+    animation: spin 40s linear infinite;
+  }
+  .ring--outer::before, .ring--outer::after{
+    content:"";
+    position:absolute;
+    width:6px; height:6px;
+    background: var(--ember-dim);
+    border-radius:50%;
+    top:-3px; left:calc(50% - 3px);
+  }
+  .ring--outer::after{ top:auto; bottom:-3px; }
+
+  .ring--dashed{
+    inset:9%;
+    border:2px dashed var(--ember-dim);
+    animation: spin-rev 26s linear infinite;
+    opacity:.55;
+  }
+
+  .ring--tick{
+    inset:18%;
+    animation: spin 60s linear infinite;
+  }
+  .ring--tick svg{ width:100%; height:100%; display:block; }
+
+  .core{
+    position:absolute;
+    inset:30%;
+    border-radius:50%;
+    background: radial-gradient(circle at 50% 45%, var(--ember-hot) 0%, var(--ember) 38%, #3a1c06 78%, transparent 100%);
+    box-shadow:
+      0 0 30px 6px rgba(255,138,43,.55),
+      0 0 90px 30px rgba(255,138,43,.22),
+      inset 0 0 20px rgba(255,255,255,.25);
+    animation: breathe 3.2s ease-in-out infinite;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .core-inner{
+    width:38%;
+    height:38%;
+    border-radius:50%;
+    background: radial-gradient(circle, #fff4df 0%, var(--ember-hot) 55%, transparent 100%);
+    filter: blur(0.3px);
+  }
+
+  .reactor-wrap.listening .core{
+    animation: breathe-fast 1s ease-in-out infinite;
+  }
+  .reactor-wrap.listening .ring--dashed{
+    animation-duration: 8s;
+    opacity:.9;
+  }
+  .reactor-wrap.speaking .core{
+    animation: breathe-fast .55s ease-in-out infinite;
+  }
+
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  @keyframes spin-rev{ to{ transform: rotate(-360deg); } }
+  @keyframes breathe{
+    0%,100%{ transform: scale(1); filter:brightness(1); }
+    50%{ transform: scale(1.035); filter:brightness(1.15); }
+  }
+  @keyframes breathe-fast{
+    0%,100%{ transform: scale(1); filter:brightness(1); }
+    50%{ transform: scale(1.09); filter:brightness(1.3); }
+  }
+
+  /* ---------- caption / readout ---------- */
+  .readout{
+    margin-top:36px;
+    min-height:64px;
+    max-width:560px;
+    text-align:center;
+  }
+  .readout .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    color: var(--ember-dim);
+    margin-bottom:6px;
+  }
+  .readout .line{
+    font-size:19px;
+    font-weight:500;
+    color: var(--text);
+    line-height:1.4;
+  }
+  .readout .line.dim{ color: var(--text-dim); font-size:15px; }
+
+  .hint{
+    position:absolute;
+    top:78px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:12px;
+    color: var(--text-dim);
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:.05em;
+    text-align:center;
+    max-width:80vw;
+  }
+
+  .unsupported{
+    position:absolute;
+    inset:0;
+    background: var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px;
+    font-size:16px;
+    color: var(--text-dim);
+    z-index:50;
+  }
+
+  .error-banner{
+    position:absolute;
+    top:110px;
+    left:50%;
+    transform:translateX(-50%);
+    max-width:80vw;
+    background: rgba(120,20,10,.18);
+    border:1px solid #7a2a10;
+    color:#ffb499;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    padding:8px 14px;
+    border-radius:4px;
+    text-align:center;
+    display:none;
+  }
+
+  .bottom-controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    margin-top:22px;
+    flex-wrap:wrap;
+  }
+
+  .gear-btn{
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    border:1px solid var(--ember-dim);
+    background:transparent;
+    color: var(--text-dim);
+    font-size:12px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .gear-btn:hover{ color: var(--ember-hot); border-color: var(--ember-hot); }
+  .gear-btn.active{
+    color: var(--bg);
+    background: var(--ember-hot);
+    border-color: var(--ember-hot);
+  }
+
+  .thinking-dot{
+    display:inline-block;
+    width:6px; height:6px;
+    border-radius:50%;
+    background: var(--ember-hot);
+    margin-left:4px;
+    animation: blink 1s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:.2;} 50%{opacity:1;} }
+
+  .text-input-row{
+    margin-top:22px;
+    display:flex;
+    gap:8px;
+    width:min(90vw, 420px);
+  }
+  .text-input-row input{
+    flex:1;
+    background: rgba(255,255,255,.03);
+    border:1px solid var(--ring-track);
+    border-radius:6px;
+    padding:10px 12px;
+    color: var(--text);
+    font-family:'Rajdhani',sans-serif;
+    font-size:15px;
+    outline:none;
+  }
+  .text-input-row input:focus{ border-color: var(--ember-dim); }
+  .text-input-row input::placeholder{ color:#5c503d; }
+  .text-input-row button{
+    width:42px;
+    border-radius:6px;
+    border:1px solid var(--ember-dim);
+    background:transparent;
+    color: var(--ember-hot);
+    font-size:16px;
+    cursor:pointer;
+  }
+  .text-input-row button:hover{ background: var(--ember-dim); }
+
+  .confirm-box{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    margin-top:22px;
+    padding:16px 20px;
+    max-width:min(90vw, 460px);
+    border:1px solid var(--ember-dim);
+    border-radius:8px;
+    background: rgba(255,138,43,.06);
+  }
+  .confirm-box .confirm-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    color: var(--ember-dim);
+  }
+  .confirm-box .confirm-text{
+    text-align:center;
+    font-size:17px;
+    color: var(--text);
+  }
+  .confirm-actions{ display:flex; gap:14px; }
+  .confirm-btn{
+    padding:8px 22px;
+    border-radius:6px;
+    font-family:'Rajdhani',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    border:1px solid;
+  }
+  .confirm-btn.yes{
+    background: var(--ember);
+    border-color: var(--ember);
+    color: #1a0e04;
+  }
+  .confirm-btn.no{
+    background:transparent;
+    border-color: var(--text-dim);
+    color: var(--text-dim);
+  }
+
+  .gear-btn.lang-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+
+  .commands-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background: rgba(2,3,4,.78);
+    z-index:60;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .commands-panel{
+    width:min(92vw, 480px);
+    max-height:80vh;
+    overflow-y:auto;
+    background: var(--bg-deep);
+    border:1px solid var(--ember-dim);
+    border-radius:10px;
+    padding:20px 22px;
+  }
+  .commands-panel h2{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    letter-spacing:.14em;
+    color: var(--ember-hot);
+    margin-bottom:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .commands-panel h2 .close-x{
+    cursor:pointer;
+    color: var(--text-dim);
+    font-size:16px;
+    line-height:1;
+  }
+  .commands-panel h2 .close-x:hover{ color: var(--ember-hot); }
+  .cmd-item{
+    padding:9px 0;
+    border-bottom:1px solid #14100a;
+  }
+  .cmd-item:last-child{ border-bottom:none; }
+  .cmd-item .cmd-en{
+    font-size:14.5px;
+    color: var(--text);
+    font-weight:500;
+  }
+  .cmd-item .cmd-fa{
+    font-size:13px;
+    color: var(--text-dim);
+    margin-top:2px;
+    direction:rtl;
+    text-align:right;
+  }
+  .sr-only{
+    position:absolute;
+    width:1px; height:1px;
+    padding:0; margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+    border:0;
+  }
+</style>
+</head>
+<body>
+
+  <h1 class="sr-only">Jarvis Assistant – Free AI Voice Assistant Web App</h1>
+  <p class="sr-only">
+    Jarvis Assistant is a free, browser-based AI voice assistant inspired by Iron Man's JARVIS.
+    Talk to it using your microphone or type your commands: ask it questions and get AI-powered answers,
+    translate words between languages, do quick math calculations, check the time and date anywhere in the world,
+    play rock-paper-scissors, open apps and websites, search the web, and identify songs playing around you —
+    all through an animated sci-fi HUD interface. No installation required, works directly in your browser.
+  </p>
+
+  <div class="status-bar">
+    <div>SYS <span class="value" id="sysState">STANDBY</span></div>
+    <div>MIC <span class="value" id="micState">OFF</span></div>
+    <div>CLOCK <span class="value" id="clockVal">--:--:--</span></div>
+  </div>
+
+  <div class="error-banner" id="errorBanner"></div>
+
+  <div class="reactor-wrap" id="reactor">
+    <div class="ring ring--outer"></div>
+    <div class="ring ring--dashed"></div>
+    <div class="ring ring--tick">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="48" fill="none" stroke="#2a1a0a" stroke-width="1" stroke-dasharray="1 4.2"/>
+      </svg>
+    </div>
+    <div class="core"><div class="core-inner"></div></div>
+  </div>
+
+  <div class="readout">
+    <div class="label">READOUT</div>
+    <div class="line" id="mainLine">آماده‌ام، آقای استارک.</div>
+    <div class="line dim" id="subLine"></div>
+  </div>
+
+  <div class="confirm-box" id="confirmBox">
+    <div class="confirm-label">CONFIRM COMMAND</div>
+    <div class="confirm-text" id="confirmText"></div>
+    <div class="confirm-actions">
+      <button class="confirm-btn yes" id="confirmYes">✓ Yes</button>
+      <button class="confirm-btn no" id="confirmNo">✗ No</button>
+    </div>
+  </div>
+
+  <div class="text-input-row">
+    <input type="text" id="textCmdInput" placeholder="یا اینجا تایپ کن...">
+    <button id="textCmdSend">➤</button>
+  </div>
+
+  <div class="bottom-controls">
+    <button class="gear-btn" id="pinBtn" title="Secure Panel">⚙</button>
+    <button class="gear-btn" id="commandsBtn" title="لیست دستورات / Commands list">☰</button>
+    <button class="gear-btn lang-btn" id="langToggleBtn" title="زبان تشخیص گفتار / Recognition language">EN</button>
+    <button class="gear-btn active" id="confirmToggleBtn" title="تأیید قبل از اجرا">✓</button>
+  </div>
+
+  <div class="commands-overlay" id="commandsOverlay">
+    <div class="commands-panel">
+      <h2><span>COMMANDS / دستورات</span><span class="close-x" id="commandsClose">✕</span></h2>
+      <div id="commandsList"></div>
+    </div>
+  </div>
+
+  <script>
+    const reactor   = document.getElementById('reactor');
+    const mainLine  = document.getElementById('mainLine');
+    const subLine   = document.getElementById('subLine');
+    const micState  = document.getElementById('micState');
+    const sysState  = document.getElementById('sysState');
+    const clockVal  = document.getElementById('clockVal');
+
+    // ---- live clock ----
+    function tickClock(){
+      const d = new Date();
+      clockVal.textContent = d.toLocaleTimeString('en-GB');
+    }
+    setInterval(tickClock, 1000);
+    tickClock();
+
+    function randomPick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+    const HOW_ARE_YOU_REPLIES = [
+      "I'm doing well, thank you for asking.",
+      "All systems are running smoothly, sir.",
+      "Can't complain, my arc reactor's at full charge.",
+      "Better now that you're here.",
+      "Never better — systems nominal across the board.",
+      "I'm operating at peak efficiency, thanks for asking.",
+      "Just fine, though I could use a bit more processing power.",
+      "Running like a well-oiled reactor, sir.",
+      "I'm great — no errors in the log today.",
+      "Doing well. How about you?"
+    ];
+    const HOW_ARE_YOU_DOING_REPLIES = [
+      "Standing by and ready for your command, sir.",
+      "Always at your service.",
+      "Fully operational and awaiting instructions.",
+      "Everything's running perfectly on my end.",
+      "Diagnostics all green, ready when you are.",
+      "Just keeping the lights on and the systems humming.",
+      "Doing great — say the word and I'm on it.",
+      "All circuits nominal, sir.",
+      "Steady as ever, awaiting your next move.",
+      "Doing well, thanks for checking in."
+    ];
+    const WHATS_UP_REPLIES = [
+      "Not much, just keeping systems online. I'm good, thanks!",
+      "All good here, thanks for asking!",
+      "Just monitoring things as usual — I'm good, thanks.",
+      "Nothing much, all systems steady. I'm doing well, thanks!",
+      "I'm good, thanks! Just here running diagnostics.",
+      "Not a lot — everything's calm and I'm doing fine, thanks.",
+      "I'm good, thank you! Just waiting for your next command.",
+      "All quiet on my end. I'm doing well, thanks for asking!",
+      "Just cruising along — I'm good, thanks!",
+      "Nothing new, I'm doing great, thanks for checking in!"
+    ];
+    const RAINBOW_COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+
+    const HOW_ARE_YOU_REPLIES_FA = [
+      'خوبم، ممنون که پرسیدی.',
+      'همه‌چیز داره روی روال درست پیش می‌ره، آقا.',
+      'شکایتی ندارم، رآکتورم کاملاً شارژه.',
+      'حالا که تو اینجایی بهتر از همیشه‌ام.',
+      'از همیشه بهتر — همه‌ی سیستم‌ها نرماله.',
+      'با بیشترین بازدهی کار می‌کنم، ممنون که پرسیدی.',
+      'خوبم، فقط یه‌کم پردازنده‌ی بیشتر می‌خواستم.',
+      'مثل یه رآکتور روغن‌کاری‌شده کار می‌کنم، آقا.',
+      'عالی‌ام — امروز هیچ خطایی توی لاگ نیست.',
+      'خوبم. تو چطوری؟'
+    ];
+    const HOW_ARE_YOU_DOING_REPLIES_FA = [
+      'آماده و منتظر دستورتم، آقا.',
+      'همیشه در خدمتتم.',
+      'کاملاً عملیاتی‌ام و منتظر دستور.',
+      'همه‌چیز از طرف من عالی پیش می‌ره.',
+      'همه‌ی دیاگنوستیک‌ها سبزن، هر وقت آماده بودی من هستم.',
+      'فقط دارم چراغ‌ها رو روشن نگه می‌دارم و سیستم‌ها رو زنده.',
+      'عالی‌ام — فقط بگو و شروع می‌کنم.',
+      'همه‌ی مدارها نرمالن، آقا.',
+      'ثابت مثل همیشه، منتظر حرکت بعدیتم.',
+      'خوبم، ممنون که سر زدی.'
+    ];
+    const WHATS_UP_REPLIES_FA = [
+      'چیز خاصی نیست، فقط سیستم‌ها رو آنلاین نگه داشتم. خوبم، ممنون!',
+      'همه‌چیز خوبه اینجا، ممنون که پرسیدی!',
+      'فقط طبق معمول دارم چیزها رو زیر نظر دارم — خوبم، ممنون.',
+      'چیز زیادی نیست، همه‌ی سیستم‌ها پایدارن. حالم خوبه، ممنون!',
+      'خوبم، ممنون! فقط دارم دیاگنوستیک اجرا می‌کنم.',
+      'زیاد چیزی نیست — همه‌چیز آرومه و حالم خوبه.',
+      'خوبم، ممنون! منتظر دستور بعدیتم.',
+      'همه‌جا آرومه از طرف من. خوبم، ممنون که پرسیدی!',
+      'دارم به کارم ادامه می‌دم — خوبم، ممنون!',
+      'چیز جدیدی نیست، حالم عالیه، ممنون که سر زدی!'
+    ];
+    const RAINBOW_COLORS_FA = ['قرمز', 'نارنجی', 'زرد', 'سبز', 'آبی', 'نیلی', 'بنفش'];
+
+    // ---- error banner ----
+    const errorBanner = document.getElementById('errorBanner');
+    function showError(msg){
+      errorBanner.textContent = msg;
+      errorBanner.style.display = 'block';
+    }
+    function clearError(){
+      errorBanner.style.display = 'none';
+    }
+
+    // ---- logging (on-screen history panel removed; kept as a no-op so
+    // existing call sites don't need to change) ----
+    function log(role, text){ /* intentionally empty */ }
+
+    // ---- language helper ----
+    function isPersian(text){ return /[\u0600-\u06FF]/.test(text); }
+
+    // ---- speech synthesis ----
+    // Auto-detects the language of the text being spoken (Persian script vs.
+    // everything else) and picks a matching voice, so Jarvis answers in
+    // whichever language the reply text was actually written in.
+    //
+    // For Persian: most browsers/OSes ship no Persian voice at all (or a very
+    // poor one), so we prefer a real Persian voice if the device happens to
+    // have one, and otherwise synthesize speech through GapGPT's
+    // OpenAI-compatible text-to-speech endpoint and play back the resulting
+    // audio — giving Jarvis an actual Persian speaking voice everywhere.
+    let cloudAudioEl = null;
+
+    function speak(text){
+      mainLine.textContent = text;
+      const speakPersian = isPersian(text);
+
+      if (speakPersian) {
+        const voices = ('speechSynthesis' in window) ? speechSynthesis.getVoices() : [];
+        const faVoice = voices.find(v => /^fa/i.test(v.lang));
+        if (faVoice) {
+          speakWithBrowserVoice(text, faVoice, 'fa-IR');
+        } else {
+          speakWithCloudTTS(text);
+        }
+        return;
+      }
+
+      if (!('speechSynthesis' in window)) { return; }
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => /en-GB|en-US/.test(v.lang) && /male|daniel|david|alex/i.test(v.name))
+                      || voices.find(v => /en-GB/.test(v.lang))
+                      || voices.find(v => /en/.test(v.lang));
+      speakWithBrowserVoice(text, preferred, 'en-US');
+    }
+
+    function speakWithBrowserVoice(text, voice, lang){
+      if (!('speechSynthesis' in window)) { return; }
+      if (cloudAudioEl) { try { cloudAudioEl.pause(); } catch (e) {} }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.02;
+      utter.pitch = 0.85;
+      utter.lang = lang;
+      if (voice) utter.voice = voice;
+
+      reactor.classList.add('speaking');
+      utter.onend = () => reactor.classList.remove('speaking');
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utter);
+    }
+
+    async function speakWithCloudTTS(text){
+      try { speechSynthesis.cancel(); } catch (e) {}
+      try {
+        const res = await fetch('https://api.gapgpt.app/v1/audio/speech', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'tts-1',
+            voice: 'alloy',
+            input: text,
+            response_format: 'mp3'
+          })
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        if (cloudAudioEl) { try { cloudAudioEl.pause(); } catch (e) {} }
+        cloudAudioEl = new Audio(url);
+        reactor.classList.add('speaking');
+        cloudAudioEl.onended = () => { reactor.classList.remove('speaking'); URL.revokeObjectURL(url); };
+        cloudAudioEl.onerror = () => { reactor.classList.remove('speaking'); URL.revokeObjectURL(url); };
+        await cloudAudioEl.play();
+      } catch (err) {
+        // last resort: read it with whatever default voice the browser has,
+        // even without a proper Persian voice, so the reply is never silent
+        if ('speechSynthesis' in window) {
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = 'fa-IR';
+          reactor.classList.add('speaking');
+          utter.onend = () => reactor.classList.remove('speaking');
+          speechSynthesis.speak(utter);
+        }
+      }
+    }
+
+    // ---- confirm-before-execute toggle ----
+    let confirmMode = true;
+    const confirmToggleBtn = document.getElementById('confirmToggleBtn');
+    confirmToggleBtn.addEventListener('click', () => {
+      confirmMode = !confirmMode;
+      confirmToggleBtn.classList.toggle('active', confirmMode);
+      confirmToggleBtn.title = confirmMode ? 'تأیید قبل از اجرا: روشن' : 'تأیید قبل از اجرا: خاموش';
+    });
+
+    const confirmBox  = document.getElementById('confirmBox');
+    const confirmText = document.getElementById('confirmText');
+    const confirmYes  = document.getElementById('confirmYes');
+    const confirmNo   = document.getElementById('confirmNo');
+    let pendingConfirmText = null;
+    let voiceAccum = '';
+
+    function askConfirmation(text){
+      pendingConfirmText = text;
+      confirmText.textContent = `«${text}»`;
+      confirmBox.style.display = 'flex';
+    }
+
+    // Stops the listening chain and either runs the accumulated command or discards it.
+    function finalizeCapture(execute){
+      listeningSession = false;
+      try { recognition && recognition.stop(); } catch (e) {}
+      confirmBox.style.display = 'none';
+      const text = voiceAccum;
+      voiceAccum = '';
+      pendingConfirmText = null;
+      if (execute && text) handleCommand(text);
+    }
+
+    confirmYes.addEventListener('click', () => finalizeCapture(true));
+    confirmNo.addEventListener('click', () => {
+      finalizeCapture(false);
+      mainLine.textContent = 'لغو شد.';
+    });
+
+    // Removes duplicated command keywords (search/for/open/jarvis) and duplicated
+    // content words caused by the device re-hearing the same audio across chained
+    // restarts, then rebuilds a clean "search for X" / "open X" style command.
+    function cleanVoiceCommand(raw){
+      const words = raw.trim().split(/\s+/);
+      let action = null;
+      const contentWords = [];
+      const seen = new Set();
+
+      for (const w of words) {
+        const lw = w.toLowerCase().replace(/[^a-z'\u0600-\u06FF]/g, '');
+        if (!lw) continue;
+        if (['jarvis', 'hey', 'ok', 'okay', 'جارویس', 'هی', 'اوکی'].includes(lw)) continue;
+        if (lw === 'search' || lw === 'open' || lw === 'launch') {
+          if (!action) action = (lw === 'launch') ? 'open' : lw;
+          continue;
+        }
+        if (lw === 'for' && action === 'search') continue;
+        if (seen.has(lw)) continue;
+        seen.add(lw);
+        contentWords.push(w);
+      }
+
+      if (action && contentWords.length) {
+        const query = contentWords.join(' ');
+        return action === 'search' ? `search for ${query}` : `open ${query}`;
+      }
+      return contentWords.join(' ');
+    }
+
+    function stripWake(text){
+      return text.toLowerCase().trim()
+        .replace(/^(hey |ok |okay )?jarvis[,.\s]*/i, '')
+        .replace(/^(هی |اوکی )?جارویس[،,.\s]*/, '')
+        .trim();
+    }
+
+    // ---- typed command input ----
+    const textCmdInput = document.getElementById('textCmdInput');
+    const textCmdSend  = document.getElementById('textCmdSend');
+    function sendTypedCommand(){
+      const val = textCmdInput.value.trim();
+      if (!val) return;
+      textCmdInput.value = '';
+      handleCommand(val);
+    }
+    textCmdSend.addEventListener('click', sendTypedCommand);
+    textCmdInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendTypedCommand();
+    });
+
+    // ---- secure panel (top-left button) ----
+    const pinBtn = document.getElementById('pinBtn');
+    pinBtn.addEventListener('click', () => {
+      const entered = prompt('پین ۴ رقمی رو وارد کن:');
+      if (entered !== null) {
+        if (entered.trim() === '3392') {
+          alert('پوچ! فکر کردی خیلی زرنگی نه؟');
+        } else {
+          alert('پین اشتباه وارد شد.');
+        }
+      }
+    });
+
+    // ---- recognition language toggle (EN / FA) ----
+    let recogLang = 'en-US';
+    const langToggleBtn = document.getElementById('langToggleBtn');
+    langToggleBtn.addEventListener('click', () => {
+      recogLang = (recogLang === 'en-US') ? 'fa-IR' : 'en-US';
+      langToggleBtn.textContent = (recogLang === 'en-US') ? 'EN' : 'FA';
+      langToggleBtn.title = (recogLang === 'en-US')
+        ? 'زبان تشخیص گفتار: انگلیسی'
+        : 'زبان تشخیص گفتار: فارسی';
+      if (recognition) recognition.lang = recogLang;
+    });
+
+    // ---- commands list panel ----
+    const COMMANDS_LIST = [
+      { en: '"Jarvis"', fa: '«جارویس»' },
+      { en: 'Open "<app name>"', fa: '«...» رو باز کن' },
+      { en: 'Search for "<query>"', fa: '«...» رو جستجو کن' },
+      { en: 'What time is it?', fa: 'ساعت چنده؟' },
+      { en: 'What time is it in "<place>"?', fa: 'ساعت در «...» چنده؟' },
+      { en: 'What date is it?', fa: 'امروز چه تاریخیه؟' },
+      { en: 'Translate "<word>" to "<language>"', fa: '«...» رو به «...» ترجمه کن' },
+      { en: 'Translate "<word>"', fa: '«...» رو ترجمه کن' },
+      { en: 'How are you? / How are you doing?', fa: 'حالت چطوره؟' },
+      { en: "What's up?", fa: 'چه خبرا؟' },
+      { en: "What's your favorite color?", fa: 'رنگ مورد علاقت چیه؟' },
+      { en: "What's your name?", fa: 'اسمت چیه؟' },
+      { en: "Who's your developer?", fa: 'سازندت کیه؟' },
+      { en: "What's the capital of Iran?", fa: 'پایتخت ایران کجاست؟' },
+      { en: "Let's play rock paper scissor!", fa: 'بیا سنگ کاغذ قیچی بازی کنیم!' },
+      { en: 'Math: "12 + 5 * 3", "10 % 100" (percent), "11 %% 2" (modulo) — correct operator precedence', fa: 'محاسبات ریاضی: «۱۲ + ۵ * ۳»، «۱۰ ٪ ۱۰۰» (درصد)، «۱۱ ٪٪ ۲» (باقیمانده) — اولویت عملگرها رعایت می‌شه' },
+      { en: 'Anything else → answered by AI / web', fa: 'هر چیز دیگه → با هوش مصنوعی یا جستجوی وب جواب داده می‌شه' },
+      { en: 'Note: commands can be given in Persian or English, but Jarvis always answers out loud in English', fa: 'توجه: دستور می‌تونه فارسی یا انگلیسی باشه، ولی جارویس همیشه با صدای انگلیسی جواب می‌ده' }
+    ];
+    const commandsOverlay = document.getElementById('commandsOverlay');
+    const commandsList    = document.getElementById('commandsList');
+    const commandsBtn     = document.getElementById('commandsBtn');
+    const commandsClose   = document.getElementById('commandsClose');
+    commandsList.innerHTML = COMMANDS_LIST.map(c =>
+      `<div class="cmd-item"><div class="cmd-en">${c.en}</div><div class="cmd-fa">${c.fa}</div></div>`
+    ).join('');
+    commandsBtn.addEventListener('click', () => { commandsOverlay.style.display = 'flex'; });
+    commandsClose.addEventListener('click', () => { commandsOverlay.style.display = 'none'; });
+    commandsOverlay.addEventListener('click', (e) => {
+      if (e.target === commandsOverlay) commandsOverlay.style.display = 'none';
+    });
+
+    // ---- translation ----
+    const LANGUAGES = {
+      english: { code:'en', en:'English', fa:'انگلیسی' },
+      persian: { code:'fa', en:'Persian', fa:'فارسی' },
+      farsi:   { code:'fa', en:'Persian', fa:'فارسی' },
+      spanish: { code:'es', en:'Spanish', fa:'اسپانیایی' },
+      french:  { code:'fr', en:'French', fa:'فرانسوی' },
+      german:  { code:'de', en:'German', fa:'آلمانی' },
+      arabic:  { code:'ar', en:'Arabic', fa:'عربی' },
+      turkish: { code:'tr', en:'Turkish', fa:'ترکی' },
+      italian: { code:'it', en:'Italian', fa:'ایتالیایی' },
+      russian: { code:'ru', en:'Russian', fa:'روسی' },
+      chinese: { code:'zh-CN', en:'Chinese', fa:'چینی' },
+      japanese:{ code:'ja', en:'Japanese', fa:'ژاپنی' },
+      korean:  { code:'ko', en:'Korean', fa:'کره‌ای' },
+      portuguese:{ code:'pt', en:'Portuguese', fa:'پرتغالی' },
+      hindi:   { code:'hi', en:'Hindi', fa:'هندی' },
+      urdu:    { code:'ur', en:'Urdu', fa:'اردو' },
+      'فارسی':      { code:'fa', en:'Persian', fa:'فارسی' },
+      'انگلیسی':    { code:'en', en:'English', fa:'انگلیسی' },
+      'اسپانیایی':  { code:'es', en:'Spanish', fa:'اسپانیایی' },
+      'فرانسوی':    { code:'fr', en:'French', fa:'فرانسوی' },
+      'آلمانی':     { code:'de', en:'German', fa:'آلمانی' },
+      'عربی':       { code:'ar', en:'Arabic', fa:'عربی' },
+      'ترکی':       { code:'tr', en:'Turkish', fa:'ترکی' },
+      'ایتالیایی':  { code:'it', en:'Italian', fa:'ایتالیایی' },
+      'روسی':       { code:'ru', en:'Russian', fa:'روسی' },
+      'چینی':       { code:'zh-CN', en:'Chinese', fa:'چینی' },
+      'ژاپنی':      { code:'ja', en:'Japanese', fa:'ژاپنی' },
+      'کره‌ای':      { code:'ko', en:'Korean', fa:'کره‌ای' },
+      'پرتغالی':    { code:'pt', en:'Portuguese', fa:'پرتغالی' },
+      'هندی':       { code:'hi', en:'Hindi', fa:'هندی' },
+      'اردو':       { code:'ur', en:'Urdu', fa:'اردو' }
+    };
+
+    async function translateWord(word, targetName, userIsPersian){
+      let lang = targetName ? LANGUAGES[targetName.toLowerCase().trim()] : null;
+      if (!lang) {
+        lang = isPersian(word)
+          ? { code:'en', en:'English', fa:'انگلیسی' }
+          : { code:'fa', en:'Persian', fa:'فارسی' };
+      }
+      mainLine.innerHTML = (userIsPersian ? 'در حال ترجمه' : 'Translating') + '<span class="thinking-dot"></span>';
+      try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(lang.code)}&dt=t&q=${encodeURIComponent(word)}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        const translated = ((data && data[0]) || []).map(seg => seg[0]).join('').trim();
+        if (!translated) throw new Error('empty');
+        if (userIsPersian) {
+          speak(`ترجمه‌ی «${word}» به ${lang.fa} می‌شه: ${translated}`);
+        } else {
+          speak(`${word} means ${translated} in ${lang.en}.`);
+        }
+      } catch (err) {
+        speak(userIsPersian ? 'متاسفم، نتونستم ترجمه‌ش کنم.' : "Sorry, I couldn't translate that.");
+      }
+    }
+
+    // ---- Persian (Jalali) calendar, spelled out in English ----
+    const JALALI_MONTHS = ['Farvardin','Ordibehesht','Khordad','Tir','Mordad','Shahrivar','Mehr','Aban','Azar','Dey','Bahman','Esfand'];
+    function formatJalaliEnglish(d){
+      try {
+        const parts = new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn', { day:'numeric', month:'numeric', year:'numeric' }).formatToParts(d);
+        const day   = parts.find(p => p.type === 'day').value;
+        const month = parseInt(parts.find(p => p.type === 'month').value, 10);
+        const year  = parts.find(p => p.type === 'year').value;
+        return `${day} ${JALALI_MONTHS[month - 1]} ${year}`;
+      } catch (e) {
+        return 'unavailable';
+      }
+    }
+    // ---- Persian (Jalali) calendar, spelled out in Persian ----
+    const JALALI_MONTHS_FA = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+    function toPersianDigits(value){
+      const en = '0123456789', fa = '۰۱۲۳۴۵۶۷۸۹';
+      return String(value).replace(/[0-9]/g, d => fa[en.indexOf(d)]);
+    }
+    function formatJalaliPersian(d){
+      try {
+        // nu-latn keeps the parsed values in plain digits so month can be
+        // parseInt'd reliably; we convert to Persian digits only for display.
+        const parts = new Intl.DateTimeFormat('fa-IR-u-ca-persian-nu-latn', { day:'numeric', month:'numeric', year:'numeric' }).formatToParts(d);
+        const day   = parts.find(p => p.type === 'day').value;
+        const month = parseInt(parts.find(p => p.type === 'month').value, 10);
+        const year  = parts.find(p => p.type === 'year').value;
+        return `${toPersianDigits(day)} ${JALALI_MONTHS_FA[month - 1]} ${toPersianDigits(year)}`;
+      } catch (e) {
+        return 'نامشخص';
+      }
+    }
+
+    // ---- world clock ----
+    const TIMEZONE_MAP = {
+      iran:'Asia/Tehran', tehran:'Asia/Tehran', 'ایران':'Asia/Tehran', 'تهران':'Asia/Tehran',
+      usa:'America/New_York', america:'America/New_York', 'new york':'America/New_York',
+      'آمریکا':'America/New_York', 'نیویورک':'America/New_York',
+      london:'Europe/London', uk:'Europe/London', england:'Europe/London', 'لندن':'Europe/London', 'انگلیس':'Europe/London',
+      paris:'Europe/Paris', france:'Europe/Paris', 'پاریس':'Europe/Paris', 'فرانسه':'Europe/Paris',
+      berlin:'Europe/Berlin', germany:'Europe/Berlin', 'برلین':'Europe/Berlin', 'آلمان':'Europe/Berlin',
+      moscow:'Europe/Moscow', russia:'Europe/Moscow', 'مسکو':'Europe/Moscow', 'روسیه':'Europe/Moscow',
+      tokyo:'Asia/Tokyo', japan:'Asia/Tokyo', 'توکیو':'Asia/Tokyo', 'ژاپن':'Asia/Tokyo',
+      beijing:'Asia/Shanghai', china:'Asia/Shanghai', 'پکن':'Asia/Shanghai', 'چین':'Asia/Shanghai',
+      seoul:'Asia/Seoul', korea:'Asia/Seoul', 'سئول':'Asia/Seoul', 'کره':'Asia/Seoul',
+      dubai:'Asia/Dubai', uae:'Asia/Dubai', 'دبی':'Asia/Dubai', 'امارات':'Asia/Dubai',
+      istanbul:'Europe/Istanbul', turkey:'Europe/Istanbul', 'استانبول':'Europe/Istanbul', 'ترکیه':'Europe/Istanbul',
+      sydney:'Australia/Sydney', australia:'Australia/Sydney', 'سیدنی':'Australia/Sydney', 'استرالیا':'Australia/Sydney',
+      'los angeles':'America/Los_Angeles', 'لس آنجلس':'America/Los_Angeles',
+      toronto:'America/Toronto', canada:'America/Toronto', 'تورنتو':'America/Toronto', 'کانادا':'America/Toronto',
+      madrid:'Europe/Madrid', spain:'Europe/Madrid', 'مادرید':'Europe/Madrid', 'اسپانیا':'Europe/Madrid',
+      rome:'Europe/Rome', italy:'Europe/Rome', 'رم':'Europe/Rome', 'ایتالیا':'Europe/Rome',
+      cairo:'Africa/Cairo', egypt:'Africa/Cairo', 'قاهره':'Africa/Cairo', 'مصر':'Africa/Cairo',
+      delhi:'Asia/Kolkata', india:'Asia/Kolkata', 'دهلی':'Asia/Kolkata', 'هند':'Asia/Kolkata',
+      riyadh:'Asia/Riyadh', 'saudi arabia':'Asia/Riyadh', 'ریاض':'Asia/Riyadh', 'عربستان':'Asia/Riyadh'
+    };
+
+    function findTimezoneMatch(target){
+      const norm = target.toLowerCase().trim().replace(/[؟?.!]/g, '');
+      if (!norm) return null;
+      if (TIMEZONE_MAP[norm]) return TIMEZONE_MAP[norm];
+      const normNoSpace = norm.replace(/\s+/g, '');
+      for (const key in TIMEZONE_MAP) {
+        const keyNoSpace = key.replace(/\s+/g, '');
+        if (normNoSpace.includes(keyNoSpace) || keyNoSpace.includes(normNoSpace)) return TIMEZONE_MAP[key];
+      }
+      return null;
+    }
+
+    // ---- rock, paper, scissors ----
+    let rpsState = null; // null | 'choice' | 'replay'
+    let rpsBotChoice = null;
+    let rpsIsPersian = false; // language the current game round was started in
+    const RPS_WORDS_FA = { 'سنگ':'rock', 'کاغذ':'paper', 'قیچی':'scissors' };
+    const RPS_FA_NAME  = { rock:'سنگ', paper:'کاغذ', scissors:'قیچی' };
+
+    function rpsPick(){
+      const c = ['rock','paper','scissors'];
+      return c[Math.floor(Math.random() * 3)];
+    }
+    function rpsBeats(a, b){
+      return (a === 'rock' && b === 'scissors') || (a === 'paper' && b === 'rock') || (a === 'scissors' && b === 'paper');
+    }
+    function extractRpsChoice(cmd){
+      for (const w of ['rock','paper','scissors']) {
+        if (new RegExp(`\\b${w}\\b`, 'i').test(cmd)) return w;
+      }
+      for (const fa in RPS_WORDS_FA) {
+        if (cmd.includes(fa)) return RPS_WORDS_FA[fa];
+      }
+      return null;
+    }
+    function isAffirmative(cmd){
+      return /\b(yes|yeah|yep|sure|okay|ok)\b/i.test(cmd) || /(بله|آره|اره|باشه)/.test(cmd);
+    }
+    function isNegative(cmd){
+      return /\b(no|nope|nah)\b/i.test(cmd) || /(نه|خیر|نمی[\s‌]?خوام)/.test(cmd);
+    }
+
+    // ---- AI connection ----
+    const apiKey = 'sk-ka944PY7SNUGwm5xQLxpp2fY6CmCz9vyXVa7tYwVxnxVLY3j';
+
+    async function askAI(question){
+      const qIsPersian = isPersian(question);
+      mainLine.innerHTML = (qIsPersian ? 'در حال فکر کردن' : 'Thinking') + '<span class="thinking-dot"></span>';
+      try {
+        const url = `https://api.gapgpt.app/v1/chat/completions`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              { role: 'system', content: "You are JARVIS, a concise voice assistant. Answer in 1-3 short spoken sentences, plain text, no markdown, no lists. Detect the language of the user's question and reply entirely in that same language: if the question is written in Persian (Farsi), answer entirely in Persian; if it's written in English, answer entirely in English. Never mix languages and never translate the answer into a different language than the question. Your name is Jarvis (جارویس in Persian) — if asked your name, say only that. You were made/created/built by Mohammad Erfan Kheradmand — if asked who made you, developed you, or built you, answer only with that name (translate 'Mohammad Erfan Kheradmand' phonetically into Persian script as محمد عرفان خردمند when replying in Persian). Never claim to be made by OpenAI, Google, or any other company." },
+              { role: 'user', content: question }
+            ]
+          })
+        });
+        if (!res.ok) {
+          const errBody = await res.text();
+          throw new Error(`${res.status}: ${errBody.slice(0,150)}`);
+        }
+        const data = await res.json();
+        const text = data?.choices?.[0]?.message?.content?.trim();
+        speak(text || (qIsPersian ? 'جوابی دریافت نشد.' : 'No response received.'));
+      } catch (err) {
+        showError('خطای اتصال به هوش مصنوعی: ' + err.message);
+        mainLine.textContent = 'اتصال ناموفق بود.';
+      }
+    }
+
+    // ---- fallback web answer (used when no API key is set) ----
+    // Tries Wikipedia's free, key-less REST API first (CORS-enabled); if it
+    // can't find a direct answer, falls back to opening a Google search tab.
+    async function answerFromWeb(question){
+      const qIsPersian = isPersian(question);
+      // Use Persian Wikipedia for Persian questions, English Wikipedia otherwise
+      const wikiHost = qIsPersian ? 'fa.wikipedia.org' : 'en.wikipedia.org';
+      mainLine.innerHTML = 'در حال جستجو<span class="thinking-dot"></span>';
+      try {
+        const searchUrl = `https://${wikiHost}/w/api.php?action=opensearch&search=${encodeURIComponent(question)}&limit=1&namespace=0&format=json&origin=*`;
+        const searchRes = await fetch(searchUrl);
+        const searchData = await searchRes.json();
+        const title = searchData?.[1]?.[0];
+
+        if (title) {
+          const summaryUrl = `https://${wikiHost}/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+          const summaryRes = await fetch(summaryUrl);
+          if (summaryRes.ok) {
+            const summaryData = await summaryRes.json();
+            const extract = (summaryData.extract || '').trim();
+            if (extract) {
+              const sentences = extract.match(/[^.!?؟]+[.!?؟]+/g) || [extract];
+              const short = sentences.slice(0, 3).join(' ').trim();
+              speak(qIsPersian ? `${short} این از ویکی‌پدیا بود.` : `${short} That's from Wikipedia.`);
+              return;
+            }
+          }
+        }
+
+        // no direct answer found — fall back to a Google search tab
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(question)}`, '_blank');
+        speak(qIsPersian
+          ? `پاسخ مستقیمی پیدا نکردم، برای همین یه جستجوی گوگل برای «${question}» باز کردم.`
+          : `I couldn't find a direct answer, so I opened a Google search for "${question}".`);
+      } catch (err) {
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(question)}`, '_blank');
+        speak(qIsPersian ? 'یه مشکلی توی جستجو پیش اومد، برای همین گوگل رو باز کردم.' : 'I ran into an issue searching, so I opened Google instead.');
+      }
+    }
+
+    // ---- command handling ----
+    // Best-effort "installed app" launcher: the browser can't truly enumerate
+    // installed apps, so we try a known mobile deep-link scheme for the
+    // requested name, detect whether the OS actually switched away (blur) to
+    // handle it, and otherwise fall back to that app's website, and finally
+    // to a plain Google search of the name if we don't recognize it at all.
+    const APP_REGISTRY = {
+      instagram:      { scheme: 'instagram://app',   web: 'https://www.instagram.com' },
+      telegram:       { scheme: 'tg://resolve',       web: 'https://web.telegram.org' },
+      whatsapp:       { scheme: 'whatsapp://send',    web: 'https://web.whatsapp.com' },
+      youtube:        { scheme: 'youtube://',         web: 'https://www.youtube.com' },
+      twitter:        { scheme: 'twitter://',         web: 'https://twitter.com' },
+      x:              { scheme: 'twitter://',         web: 'https://twitter.com' },
+      gmail:          { scheme: 'googlegmail://',     web: 'https://mail.google.com' },
+      maps:           { scheme: 'comgooglemaps://',   web: 'https://maps.google.com' },
+      'google maps':  { scheme: 'comgooglemaps://',   web: 'https://maps.google.com' },
+      spotify:        { scheme: 'spotify://',         web: 'https://open.spotify.com' },
+      netflix:        { scheme: 'nflx://',            web: 'https://www.netflix.com' },
+      facebook:       { scheme: 'fb://',              web: 'https://www.facebook.com' },
+      tiktok:         { scheme: 'tiktok://',          web: 'https://www.tiktok.com' },
+      snapchat:       { scheme: 'snapchat://',        web: 'https://www.snapchat.com' },
+      discord:        { scheme: 'discord://',         web: 'https://discord.com/app' },
+      reddit:         { scheme: 'reddit://',          web: 'https://www.reddit.com' },
+      linkedin:       { scheme: 'linkedin://',        web: 'https://www.linkedin.com' },
+      amazon:         { scheme: null,                 web: 'https://www.amazon.com' },
+      github:         { scheme: null,                 web: 'https://github.com' },
+      google:         { scheme: null,                 web: 'https://www.google.com' },
+      wikipedia:      { scheme: null,                 web: 'https://www.wikipedia.org' }
+    };
+
+    function findAppMatch(target){
+      const norm = target.toLowerCase().replace(/\bapp\b/g, '').trim();
+      if (!norm) return null;
+      if (APP_REGISTRY[norm]) return { key: norm, ...APP_REGISTRY[norm] };
+      for (const key in APP_REGISTRY) {
+        if (norm.includes(key) || key.includes(norm)) return { key, ...APP_REGISTRY[key] };
+      }
+      return null;
+    }
+
+    function attemptOpenApp(match, displayName, userIsPersian){
+      speak(userIsPersian ? `در حال باز کردن ${displayName}.` : `Opening ${displayName}.`);
+      let didBlur = false;
+      const blurHandler = () => { didBlur = true; };
+      window.addEventListener('blur', blurHandler, { once: true });
+      try { window.location.href = match.scheme; } catch (e) {}
+      setTimeout(() => {
+        window.removeEventListener('blur', blurHandler);
+        if (!didBlur) {
+          // app didn't seem to open (likely not installed) — fall back to its website
+          window.open(match.web, '_blank');
+          speak(userIsPersian
+            ? `به نظر می‌رسه اپلیکیشن ${displayName} نصب نیست، برای همین سایتش رو باز کردم.`
+            : `Looks like the ${displayName} app isn't installed, so I opened its website instead.`);
+        }
+      }, 1200);
+    }
+
+    // ---- calculator: + - * / % with correct operator precedence ----
+    // (*, /, % share the higher precedence tier; + and - are lower)
+    // "%" is treated as percentage: `a % b` = a percent of b, i.e. (a/100)*b
+    function toAsciiDigits(str){
+      const fa = '۰۱۲۳۴۵۶۷۸۹', ar = '٠١٢٣٤٥٦٧٨٩';
+      return str.replace(/[۰-۹٠-٩]/g, ch => {
+        const i = fa.indexOf(ch);
+        return String(i > -1 ? i : ar.indexOf(ch));
+      });
+    }
+
+    function evaluateMathExpression(expr){
+      const tokens = expr.match(/\d+(?:\.\d+)?|%%|[+\-*/%()]/g);
+      if (!tokens) return null;
+      let pos = 0;
+      const peek = () => tokens[pos];
+      const next = () => tokens[pos++];
+
+      function parseFactor(){
+        if (peek() === '-') { next(); return -parseFactor(); }
+        if (peek() === '+') { next(); return parseFactor(); }
+        if (peek() === '(') {
+          next();
+          const value = parseExpression();
+          if (peek() !== ')') throw new Error('mismatched parentheses');
+          next();
+          return value;
+        }
+        const tok = next();
+        if (tok === undefined || isNaN(parseFloat(tok))) throw new Error('unexpected token');
+        return parseFloat(tok);
+      }
+
+      function parseTerm(){
+        let value = parseFactor();
+        while (peek() === '*' || peek() === '/' || peek() === '%' || peek() === '%%') {
+          const op = next();
+          const rhs = parseFactor();
+          if (op === '*') value = value * rhs;
+          else if (op === '/') value = value / rhs;
+          else if (op === '%%') value = value % rhs; // modulo
+          else value = (value * rhs) / 100; // percentage: a % b = a percent of b
+        }
+        return value;
+      }
+
+      function parseExpression(){
+        let value = parseTerm();
+        while (peek() === '+' || peek() === '-') {
+          const op = next();
+          const rhs = parseTerm();
+          value = op === '+' ? value + rhs : value - rhs;
+        }
+        return value;
+      }
+
+      try {
+        const result = parseExpression();
+        if (pos !== tokens.length) return null; // leftover, unparsed tokens
+        return result;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function handleCommand(raw){
+      let cmd = raw.toLowerCase().trim();
+      cmd = cmd.replace(/^(hey |ok |okay )?jarvis[,.\s]*/i, '').trim();
+      cmd = cmd.replace(/^(هی |اوکی )?جارویس[،,.\s]*/, '').trim();
+
+      // ---- language of THIS command: replies are given in whichever
+      // language the person actually spoke/typed in ----
+      const userIsPersian = cmd ? isPersian(cmd) : isPersian(raw);
+
+      if (!cmd) { speak(userIsPersian ? 'بله، آقا؟' : 'Yes, sir?'); return; }
+
+      log('user', raw);
+      subLine.textContent = `«${cmd}»`;
+
+      // ---- rock, paper, scissors: mid-game state takes priority over
+      // everything else so "rock" / "yes" etc. are read as game moves.
+      // The bot's pick stays hidden until the player answers. The game's
+      // language is fixed when it starts (rpsIsPersian) so later one-word
+      // replies like "rock" don't flip the language mid-round. ----
+      if (rpsState === 'choice') {
+        const userChoice = extractRpsChoice(cmd);
+        if (userChoice) {
+          let resultMsg;
+          if (rpsIsPersian) {
+            resultMsg = userChoice === rpsBotChoice ? 'مساوی شدیم.'
+                      : rpsBeats(rpsBotChoice, userChoice) ? 'من بردم!'
+                      : 'تو بردی!';
+          } else {
+            resultMsg = userChoice === rpsBotChoice ? "It's a tie."
+                      : rpsBeats(rpsBotChoice, userChoice) ? 'I win!'
+                      : 'You win!';
+          }
+          rpsState = 'replay';
+          if (rpsIsPersian) {
+            speak(`تو ${RPS_FA_NAME[userChoice]} رو انتخاب کردی، من ${RPS_FA_NAME[rpsBotChoice]} رو انتخاب کردم — ${resultMsg} دوباره بازی کنیم؟`);
+          } else {
+            speak(`You picked ${userChoice}, I picked ${rpsBotChoice} — ${resultMsg} Want to play again?`);
+          }
+          return;
+        }
+      }
+      if (rpsState === 'replay') {
+        if (isAffirmative(cmd)) {
+          rpsBotChoice = rpsPick();
+          rpsState = 'choice';
+          speak(rpsIsPersian ? 'باشه، دور جدید! انتخابت چیه — سنگ، کاغذ یا قیچی؟' : `Alright, new round! What's your choice — rock, paper, or scissors?`);
+          return;
+        } else if (isNegative(cmd)) {
+          rpsState = null; rpsBotChoice = null;
+          speak(rpsIsPersian ? 'باشه، بازی تموم شد!' : 'Alright, game over!');
+          return;
+        }
+      }
+      if (/let'?s play rock,?\s*paper,?\s*scissors?/i.test(cmd) || /سنگ\s*کاغذ\s*قیچی/.test(cmd)) {
+        rpsIsPersian = userIsPersian;
+        rpsBotChoice = rpsPick();
+        rpsState = 'choice';
+        speak(rpsIsPersian ? 'باشه بازی کنیم! انتخابت چیه — سنگ، کاغذ یا قیچی؟' : `Okay, let's play! What's your choice — rock, paper, or scissors?`);
+        return;
+      }
+
+      // math expressions: 12 + 5 * 3, 20 % 150, (4 + 6) / 2, etc.
+      // checked before other rules since it only matches pure numeric/operator input
+      const mathCandidate = toAsciiDigits(cmd).replace(/\s+/g, '');
+      if (/^[0-9+\-*/%().]+$/.test(mathCandidate) && /\d/.test(mathCandidate) && /[+\-*/%]/.test(mathCandidate)) {
+        const result = evaluateMathExpression(mathCandidate);
+        if (result !== null && isFinite(result)) {
+          const formatted = Number.isInteger(result) ? result : parseFloat(result.toFixed(6));
+          speak(userIsPersian ? `نتیجه ${formatted} شد.` : `The result is ${formatted}.`);
+        } else {
+          speak(userIsPersian ? 'متاسفم، نتونستم محاسبه‌ش کنم.' : "Sorry, I couldn't calculate that.");
+        }
+        return;
+      }
+
+      // personality / small talk — checked before the generic AI fallback
+      if (/how('?s| is| are) you doing/.test(cmd)) { speak(randomPick(userIsPersian ? HOW_ARE_YOU_DOING_REPLIES_FA : HOW_ARE_YOU_DOING_REPLIES)); return; }
+      if (/how('?s| is| are) you/.test(cmd) || /حالت چطوره/.test(cmd)) { speak(randomPick(userIsPersian ? HOW_ARE_YOU_REPLIES_FA : HOW_ARE_YOU_REPLIES)); return; }
+      if (/what'?s up/.test(cmd) || /چه خبر/.test(cmd)) { speak(randomPick(userIsPersian ? WHATS_UP_REPLIES_FA : WHATS_UP_REPLIES)); return; }
+      if (/favorite colou?r/.test(cmd) || /رنگ مورد علاقه/.test(cmd) || /رنگ مورد علاقت/.test(cmd)) {
+        speak(userIsPersian ? `رنگ مورد علاقه‌ی من ${randomPick(RAINBOW_COLORS_FA)}ـه.` : `My favorite color is ${randomPick(RAINBOW_COLORS)}.`);
+        return;
+      }
+      if (/who('s| is|se) your (developer|creator|maker)/.test(cmd) || /سازنده(‌ات| تو)? کیه/.test(cmd) || /سازندت کیه/.test(cmd) || /چه کسی (تو رو|شما رو) ساخته/.test(cmd)) {
+        speak(userIsPersian ? 'محمد عرفان خردمند من رو ساخته!' : 'Mohammad Erfan Kheradmand made me!');
+        return;
+      }
+      if (/what'?s your name/.test(cmd) || /who are you/.test(cmd) || /اسمت چیه/.test(cmd) || /اسم تو چیه/.test(cmd)) {
+        speak(userIsPersian ? 'من جارویسم.' : "I'm Jarvis.");
+        return;
+      }
+      if (/capital of iran/.test(cmd) || /پایتخت ایران/.test(cmd)) {
+        speak(userIsPersian ? 'پایتخت ایران تهرانه.' : 'The capital of Iran is Tehran.');
+        return;
+      }
+
+      // translate "<word>" [to "<language>"]
+      let tm = cmd.match(/^translate\s+"?([^"]+?)"?\s+to\s+([a-zA-Z\u0600-\u06FF\s]+?)[\?？.]?$/i)
+             || cmd.match(/^ترجمه(?:\s+کن)?\s+"?([^"]+?)"?\s+به\s+([a-zA-Z\u0600-\u06FF\s]+?)[؟?.]?$/)
+             || cmd.match(/^"?([^"]+?)"?\s+(?:رو|را)\s+به\s+([a-zA-Z\u0600-\u06FF\s]+?)\s+ترجمه(?:\s+کن)?[؟?.]?$/)
+             || cmd.match(/^translate\s+"?([^"]+?)"?[\?？.]?$/i)
+             || cmd.match(/^ترجمه(?:\s+کن)?\s+"?([^"]+?)"?[؟?.]?$/)
+             || cmd.match(/^"?([^"]+?)"?\s+(?:رو|را)\s+ترجمه(?:\s+کن)?[؟?.]?$/);
+      if (tm) {
+        const word = tm[1].trim();
+        const targetName = tm[2] ? tm[2].trim() : null;
+        translateWord(word, targetName, userIsPersian);
+        return;
+      }
+
+      // open "<app name>" app — look for a matching known app, else its
+      // website, else just Google-search the name so the user can find it themselves
+      let m = cmd.match(/^open\s+(.+)$/i)
+            || cmd.match(/^launch\s+(.+)$/i)
+            || cmd.match(/^(.+?)\s+(?:رو|را)\s+باز\s*کن[؟?.]*$/);
+      if (m) {
+        const target = m[1].trim().replace(/^["'“”]+|["'“”.]+$/g, '');
+        const match = findAppMatch(target);
+        if (match && match.scheme) {
+          attemptOpenApp(match, target, userIsPersian);
+        } else if (match && match.web) {
+          window.open(match.web, '_blank');
+          speak(userIsPersian ? `در حال باز کردن سایت ${target}.` : `Opening the ${target} website.`);
+        } else {
+          window.open(`https://www.google.com/search?q=${encodeURIComponent(target)}`, '_blank');
+          speak(userIsPersian ? `«${target}» رو به‌عنوان اپلیکیشن پیدا نکردم، برای همین توی گوگل جستجوش کردم.` : `I couldn't find "${target}" as an app, so I searched Google for it.`);
+        }
+        return;
+      }
+
+      // search for X
+      m = cmd.match(/^search (for )?(.+)$/i);
+      const searchFa = !m && cmd.match(/^(.+?)\s+(?:رو|را)\s+جستجو\s*کن[؟?.]*$/);
+      if (m || searchFa) {
+        const q = (m ? m[2] : searchFa[1]).trim().replace(/^["'“”]+|["'“”.]+$/g, '');
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
+        speak(userIsPersian ? `در حال جستجوی ${q}.` : `Searching for ${q}.`);
+        return;
+      }
+
+      // date — Gregorian + Persian (Jalali) + Islamic (Hijri)
+      if (/date/.test(cmd) || /تاریخ/.test(cmd)) {
+        const d = new Date();
+        if (userIsPersian) {
+          const gregorianFa = d.toLocaleDateString('fa-IR', { weekday:'long', year:'numeric', month:'long', day:'numeric', calendar:'gregory' });
+          const jalaliFa = formatJalaliPersian(d);
+          let hijriFa;
+          try {
+            hijriFa = new Intl.DateTimeFormat('fa-IR-u-ca-islamic', { year:'numeric', month:'long', day:'numeric' }).format(d);
+          } catch (e) {
+            hijriFa = 'نامشخص';
+          }
+          speak(`امروز در تقویم میلادی ${gregorianFa} است، در تقویم شمسی ${jalaliFa} است، و در تقویم قمری ${hijriFa} است.`);
+        } else {
+          const gregorian = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+          const jalali = formatJalaliEnglish(d);
+          let hijri;
+          try {
+            hijri = new Intl.DateTimeFormat('en-US-u-ca-islamic', { year:'numeric', month:'long', day:'numeric' }).format(d);
+          } catch (e) {
+            hijri = 'unavailable';
+          }
+          speak(`Today is ${gregorian} in the Gregorian calendar, ${jalali} in the Persian calendar, and ${hijri} in the Islamic calendar.`);
+        }
+        return;
+      }
+
+      // time in "<place>" — e.g. "what time is it in Italy" / "ساعت در ایتالیا چنده"
+      let tzM = cmd.match(/what(?:'?s| is)?\s*(?:the\s+)?time(?:\s+is\s+it)?\s+in\s+(.+?)[\?？.]?$/i)
+              || cmd.match(/ساعت\s+(?:در|توی)\s+(.+?)\s+چند(?:ه|\s+است)?[؟?.]?$/)
+              || cmd.match(/ساعت\s+(.+?)\s+چند(?:ه|\s+است)?[؟?.]?$/);
+      if (tzM) {
+        const place = tzM[1].trim();
+        const tz = findTimezoneMatch(place);
+        if (tz) {
+          try {
+            if (userIsPersian) {
+              const timeStr = new Date().toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit', timeZone: tz });
+              speak(`ساعت در ${place}، ${timeStr} است.`);
+            } else {
+              const timeStr = new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', timeZone: tz });
+              speak(`It's ${timeStr} in ${place}.`);
+            }
+          } catch (e) {
+            speak(userIsPersian ? `نتونستم منطقه‌ی زمانی ${place} رو پیدا کنم.` : `I couldn't find the time zone for ${place}.`);
+          }
+        } else {
+          speak(userIsPersian ? `متاسفم، منطقه‌ی زمانی ${place} رو نمی‌شناسم.` : `Sorry, I don't recognize the time zone for ${place}.`);
+        }
+        return;
+      }
+
+      // time (general) — only fires on the exact phrase, so it doesn't
+      // swallow "what time is it in <place>" queries
+      if (/^what time is it\??$/i.test(cmd) || /^what'?s the time\??$/i.test(cmd) || /^ساعت چنده؟?$/.test(cmd)) {
+        const d = new Date();
+        if (userIsPersian) {
+          const timeStr = d.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
+          speak(`ساعت ${timeStr} است.`);
+        } else {
+          const timeStr = d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+          speak(`It's ${timeStr}.`);
+        }
+        return;
+      }
+
+      // anything else -> ask the AI, or if no API key is set, fall back to a web/Wikipedia lookup
+      if (apiKey) {
+        askAI(cmd);
+      } else {
+        answerFromWeb(cmd);
+      }
+    }
+
+    // ---- speech recognition ----
+    // Native Web Speech API (SpeechRecognition) only exists in Chromium-based
+    // browsers (Chrome, Edge, Opera, Samsung Internet). Firefox and most
+    // in-app browsers (Telegram, Instagram, etc.) never implemented it, so
+    // for those we fall back to recording audio with MediaRecorder and
+    // transcribing it through GapGPT's Whisper-compatible endpoint.
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognizing = false;
+    let listeningSession = false; // true while we intend to keep capturing, across chained restarts
+    let recognition = null;
+
+    const hasCloudFallback = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && typeof MediaRecorder !== 'undefined');
+
+    if (!SR && !hasCloudFallback) {
+      const overlay = document.createElement('div');
+      overlay.className = 'unsupported';
+      overlay.innerHTML = 'مرورگرت از میکروفون پشتیبانی نمی‌کنه.<br>لطفاً از باکس متنی پایین صفحه برای تایپ دستورات استفاده کن.';
+      document.body.appendChild(overlay);
+    } else if (!window.isSecureContext && location.protocol === 'file:') {
+      showError('این مرورگر برای فایل‌های محلی (file://) اجازه‌ی میکروفون نمی‌ده. فایل رو با یه سرور محلی یا از روی https باز کن.');
+    } else if (!SR) {
+      // ---- cloud fallback: record audio, transcribe via GapGPT (Whisper-compatible) ----
+      let mediaRecorder = null;
+      let audioChunks = [];
+      let recordingStream = null;
+      let cloudListening = false;
+
+      async function startCloudRecording(){
+        try {
+          recordingStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        } catch (e) {
+          showError('دسترسی به میکروفون رد شد یا در دسترس نیست.');
+          return;
+        }
+        clearError();
+        audioChunks = [];
+        const mimeType = (typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported('audio/webm'))
+          ? 'audio/webm'
+          : (typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported('audio/mp4'))
+            ? 'audio/mp4'
+            : '';
+        try {
+          mediaRecorder = mimeType ? new MediaRecorder(recordingStream, { mimeType }) : new MediaRecorder(recordingStream);
+        } catch (e) {
+          mediaRecorder = new MediaRecorder(recordingStream);
+        }
+        mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = async () => {
+          recordingStream.getTracks().forEach(t => t.stop());
+          cloudListening = false;
+          recognizing = false;
+          reactor.classList.remove('listening');
+          micState.textContent = 'OFF';
+          sysState.textContent = 'STANDBY';
+          if (!audioChunks.length) return;
+          const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+          await transcribeAndHandle(blob);
+        };
+        mediaRecorder.start();
+        cloudListening = true;
+        recognizing = true;
+        reactor.classList.add('listening');
+        micState.textContent = 'LIVE';
+        sysState.textContent = 'ACTIVE';
+        mainLine.textContent = 'در حال گوش دادن... برای پایان دوباره لمس کن.';
+        subLine.textContent = '';
+      }
+
+      function stopCloudRecording(){
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+        }
+      }
+
+      async function transcribeAndHandle(blob){
+        mainLine.innerHTML = 'در حال تبدیل صدا به متن<span class="thinking-dot"></span>';
+        try {
+          const form = new FormData();
+          const ext = (blob.type && blob.type.includes('mp4')) ? 'mp4' : 'webm';
+          form.append('file', blob, `voice.${ext}`);
+          form.append('model', 'whisper-1');
+          const res = await fetch('https://api.gapgpt.app/v1/audio/transcriptions', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${apiKey}` },
+            body: form
+          });
+          if (!res.ok) throw new Error(String(res.status));
+          const data = await res.json();
+          const text = ((data && data.text) || '').trim();
+          if (!text) {
+            mainLine.textContent = 'چیزی متوجه نشدم، دوباره امتحان کن.';
+            return;
+          }
+          subLine.textContent = `«${text}»`;
+          voiceAccum = text;
+          if (confirmMode) {
+            askConfirmation(text);
+          } else {
+            handleCommand(text);
+            voiceAccum = '';
+          }
+        } catch (err) {
+          showError('خطا توی تبدیل صدا به متن: ' + err.message + ' — می‌تونی از باکس متنی هم استفاده کنی.');
+          mainLine.textContent = 'تبدیل صدا ناموفق بود.';
+        }
+      }
+
+      reactor.addEventListener('click', () => {
+        clearError();
+        if (cloudListening) {
+          stopCloudRecording();
+        } else {
+          speechSynthesis.cancel();
+          confirmBox.style.display = 'none';
+          pendingConfirmText = null;
+          startCloudRecording();
+        }
+      });
+    } else {
+      recognition = new SR();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = recogLang;
+
+      recognition.onstart = () => {
+        recognizing = true;
+        clearError();
+        reactor.classList.add('listening');
+        micState.textContent = 'LIVE';
+        sysState.textContent = 'ACTIVE';
+      };
+
+      recognition.onend = () => {
+        recognizing = false;
+        reactor.classList.remove('listening');
+        micState.textContent = 'OFF';
+        sysState.textContent = 'STANDBY';
+        if (listeningSession) {
+          // this device stops the engine after one chunk regardless of "continuous" —
+          // restart immediately so we keep capturing the rest of the sentence
+          setTimeout(() => { try { recognition.start(); } catch (e) {} }, 150);
+        }
+      };
+
+      recognition.onerror = (e) => {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+          listeningSession = false;
+          showError('دسترسی به میکروفون رد شده. روی آیکن قفل کنار آدرس‌بار بزن و اجازه‌ی میکروفون رو فعال کن.');
+        } else if (e.error === 'no-speech' || e.error === 'aborted') {
+          if (listeningSession && voiceAccum && !confirmMode) {
+            // a pause after already capturing something, with confirmation off — treat as end of sentence
+            finalizeCapture(true);
+          }
+          // otherwise ignore — onend will restart if we're still in a listening session
+        } else {
+          showError('خطای تشخیص گفتار: ' + e.error);
+        }
+      };
+
+      recognition.onresult = (event) => {
+        let interim = '';
+        let lastFinal = null;
+
+        for (let i = 0; i < event.results.length; i++) {
+          const r = event.results[i];
+          if (r.isFinal) {
+            lastFinal = r[0].transcript;
+          } else {
+            interim = r[0].transcript;
+          }
+        }
+
+        if (interim) {
+          subLine.textContent = cleanVoiceCommand(
+            `${voiceAccum} ${interim}`.trim()
+          );
+        }
+
+        if (lastFinal) {
+          // Accumulate final chunks in BOTH modes so the command is not
+          // replaced by only the newest recognized word/chunk.
+          const combined = `${voiceAccum} ${lastFinal}`.trim();
+          const cleaned = cleanVoiceCommand(combined);
+
+          if (!cleaned) {
+            // Only acknowledge an actual wake word. Pressing the reactor/button
+            // must NOT trigger "Yes, sir?" by itself.
+            const heardText = lastFinal.trim();
+            const heardWakeWord = /\b(?:hey\s+|ok\s+|okay\s+)?jarvis\b/i.test(heardText)
+              || /(هی |اوکی )?جارویس/.test(heardText);
+            if (heardWakeWord && !voiceAccum) {
+              speak('Yes, sir?');
+              subLine.textContent = '';
+            }
+            return;
+          }
+
+          voiceAccum = cleaned;
+          subLine.textContent = voiceAccum;
+
+          if (confirmMode) {
+            askConfirmation(voiceAccum);
+          }
+          // Confirmation OFF uses the exact same accumulation; execution
+          // happens in finalizeCapture(true) after the capture ends.
+        }
+      };
+
+      reactor.addEventListener('click', () => {
+        clearError();
+        if (listeningSession) {
+          if (confirmMode) {
+            listeningSession = false;
+            recognition.stop(); // leaves any open confirm panel in place, awaiting Yes/No
+          } else {
+            finalizeCapture(true); // no panel in this mode — manual stop means "run it now"
+          }
+        } else {
+          listeningSession = true;
+          voiceAccum = '';
+          confirmBox.style.display = 'none';
+          pendingConfirmText = null;
+          speechSynthesis.cancel();
+          try {
+            recognition.start();
+          } catch (e) {
+            listeningSession = false;
+            showError('شروع نشد: ' + e.message);
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
